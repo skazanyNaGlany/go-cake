@@ -1,0 +1,336 @@
+PUT http://127.0.0.1:38080/api/users/
+
+[{"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","username":"usssername444444444","password":"passsss44444444"},{"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","username":"usssername444444444","password":"passsss44444444"},{"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","username":"usssername444444444","password":"passsss44444444"}]
+
+{"_items":[{"id":"6106cc957382160006563af2","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","username":"usssername444444444","password":"passsss44444444"},{"id":"6106cc957382160006563af2","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","username":"usssername444444444","password":"passsss44444444"},{"id":"6106cc957382160006563af2","created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","username":"usssername444444444","password":"passsss44444444"}],"_meta":{"max_results":3,"total":3,"page":0}}
+
+http://localhost:38080/api/users/60d90f51be17e700064b5889
+
+http://localhost:38080/api/users/?where={%22username%22:%20%22usssername444444444%22}
+
+http://localhost:38080/api/users
+
+get rid of DatabaseDriverError
+add better error handling and return it at request processor
+
+			itemStatus := ItemStatusJSON{
+				Meta: ItemStatusMetaJSON{
+					StatusCode:    http.StatusInternalServerError,
+					StatusMessage: ErrorUtils{}.ErrorDetailedMessage(newObjectDecodeError(err.Error(), objectID)),
+				},
+			}
+
+			resultDocuments = append(resultDocuments, itemStatus)
+
+
+httperror).init
+
+
+
+
+ErrorsToItemStatusJSON
+
+^\/api\/users\/(\w+)?$
+/api/users/123
+
+
+^\/api\/users\/?(\/\w+)?$
+/api/users/123
+
+^(\/api\/users\/?)(\/\w+)?$
+/api/users/123
+
+
+
+
+
+
+
+
+On request:
+go-rh-filterable						  Default False [GET]
+go-rh-sortable							  Default False [GET]
+go-rh-insertable						  Default False [PUT/POST]
+go-rh-updatable							  Default False [PATCH]
+go-rh-etag 								    Default False [PATCH/DELETE]
+go-rh-required 							  If True, the field is mandatory on insertion. Default False [PUT/POST]
+go-rh-min, go-rh-max					Minimum and maximum length allowed for string and list types; Minimum and maximum values allowed for integer, float and number types [PUT/POST/PATCH]
+go-rh-allowed							    List of allowed values for string and list types [PUT/POST/PATCH]
+go-rh-nonempty							  Only applies to string fields. If True, validation will fail if the value is empty. Defaults to False [PUT/POST/PATCH]
+go-rh-unique							    The value of the field must be unique within the collection. (insert, update) Default False [PUT/POST/PATCH]
+go-rh-default							    The default value for the field. When serving POST and PUT requests, missing fields will be assigned the configured default values. (depends on field type, for now only for string and numbers) [PUT/POST]
+go-rh-trim                    All leading and trailing white space will be removed (only for strings)
+go-rh-regex								    Validation will fail if field value does not match the provided regex rule. Only applies to string fields [PUT/POST/PATCH]
+go-rh									        `filterable; projectable; sortable; insertable; default:123; erased; etag`
+
+
+On both:
+go-rh-projectable						  Default False [GET]
+
+
+On response:
+go-rh-hidden							    Field will not be returned, but could be inserted/updated; Default False [*]
+go-rh-erased							    If True thie field will be returned empty, only for string; Default False [*]
+
+Todo:
+Fix go-rh-default for uint64 when passing string
+
+
+
+
+62c1f121c91a43bfc803ab15
+1234
+
+62c20143c91a43bfc803ab18
+5678
+
+
+
+
+{
+  $nor: [
+{
+    _id: ObjectId('62c1f121c91a43bfc803ab15'),
+    _etag: '1234'
+}
+	,
+{
+    _id: ObjectId('62c20143c91a43bfc803ab18'),
+    _etag: '5678'
+}
+  ]
+}
+
+
+
+
+{
+  $nor: [
+{
+    _id: ObjectId('62c1f121c91a43bfc803ab15'),
+    _etag: '1234'
+}
+	,
+{
+    _id: ObjectId('62c1f121c91a43bfc803ab15'),
+    _etag: '5678'
+}
+  ]
+}
+
+
+
+
+"_id": {
+	"$in": [
+		"62c1f121c91a43bfc803ab15"
+	]
+}
+
+
+
+
+{
+    _id: ObjectId('62c1f121c91a43bfc803ab15'),
+    _etag: '1234'
+}
+
+
+
+
+
+
+
+
+
+{
+  $or: [
+{
+    _id: ObjectId('62c20143c91a43bfc803ab18'),
+    _etag: '5678'
+}
+	,
+{
+    _id: ObjectId('62c1f121c91a43bfc803ab15'),
+    _etag: '5678'
+}
+  ]
+}
+
+
+
+
+
+{
+  $or: [
+{
+    _etag: ''
+}
+  ]
+}
+
+
+
+
+
+
+{
+  $or: [
+{
+    _id: ObjectId('62c2060d5261d9e678c69417'),
+    _etag: null
+}
+  ]
+}
+
+
+
+
+
+{
+  $or: [
+    {
+      _id: ObjectId('62c1e9af65c82f1bac0e442e'),
+      _etag: null
+    }
+  ]
+}
+
+
+
+
+{
+  $or: [
+    {
+      _id: ObjectId('62c1f121c91a43bfc803ab15'),
+      _etag: null
+    }
+  ]
+}
+
+
+
+
+
+{
+  $or: [
+    {
+      _id: ObjectId('62c1e9af65c82f1bac0e442e'),
+      _etag: { $exists: false }
+    }
+  ]
+}
+
+
+
+
+
+
+{
+  $or: [
+    {
+      _id: ObjectId('62c1e9af65c82f1bac0e442e'),
+      _etag: { $exists: false }
+    }
+  ]
+}
+
+
+
+
+
+
+
+not_exists
+empty
+null
+
+
+
+NoETagsForActionHTTPError
+
+Fix default for uint:
+DefaultUint64    uint64             `json:"default_uint64_field" bson:"default_uint64_field" go-rh:"default:-123"`
+
+
+
+
+
+		"total_time_ms": "35.085722",
+		"page": 0,
+
+
+
+min 73, max 77 rolety
+
+32 x 27
+
+
+
+160
+https://www.youtube.com/watch?v=uFUV3LcgqUs
+
+
+
+
+
+
+
+
+
+
+
+brp.driver.
+brp.resource.DatabaseDriver.
+
+
+
+
+
+
+fetch("http://localhost:38080/api/orders", {
+  "headers": {
+    "accept": "*/*",
+    "sec-fetch-mode": "cors"
+  },
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "OPTIONS",
+  "mode": "cors",
+  "credentials": "omit"
+});
+
+fetch("http://localhost:38080/api/orders", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9,pl;q=0.8",
+    "access-control-request-private-network": "true",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "cross-site"
+  },
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "OPTIONS",
+  "mode": "cors",
+  "credentials": "omit"
+});
+
+
+
+
+
+
+Dwie opony zimowe do auta osobowego 185/65 R15 88T
+
+
+Witam,
+
+Mam do sprzedania dwie opony zimowe do auta osobowego, w rozmiarze 185/65 R15 88T. Opony są używane w bardzo dobrym stanie.
+
+Tylko odbiór osobisty Gdańsk - Ujeścisko-Łostowice.
+
+Dla zdecydowanych darmowa dostawa na terenie trójmiasta (bez wniesienia).
+
+Możliwość obejrzenia online przez WhatsAppa.
+
