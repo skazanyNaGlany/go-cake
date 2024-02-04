@@ -161,7 +161,6 @@ func main() {
 
 	defer dbDriver.Close()
 
-	corsConfig, _ := go_cake.NewDefaultCORSConfig()
 	restHandler := go_cake.NewHandler()
 
 	ordersValidator, err := go_cake.NewDefaultJSONValidator("orders.json", `{
@@ -217,59 +216,35 @@ func main() {
 		log.Panicln("Unable to create JSON validator:", err)
 	}
 
-	ordersResource := go_cake.Resource{
-		Pattern:             `^(?P<version>\/\w+)(?P<url>\/api\/orders\/?)$`,
-		DbPath:              "orders",
-		ResourceName:        "orders",
-		DatabaseDriver:      dbDriver,
-		DbModel:             &models.Order{},
-		DbModelIDField:      "ID",
-		DbModelETagField:    "ETag",
-		SupportedVersion:    []string{"v1"},
-		GetAllowed:          true,
-		DeleteAllowed:       true,
-		InsertAllowed:       true,
-		UpdateAllowed:       true,
-		GetMaxOutputItems:   100,
-		InsertMaxInputItems: 100,
-		DeleteMaxInputItems: 100,
-		UpdateMaxInputItems: 100,
-		CORSConfig:          corsConfig,
-		JSONSchemaConfig: &go_cake.JSONSchemaConfig{
-			IDField:                "id",
-			ETagField:              "_etag",
-			FilterableFields:       []string{"filtered_field"},
-			ProjectableFields:      []string{"hidden_proj_field", "projected_field"},
-			SortableFields:         []string{"sorted_field", "sorted_field2"},
-			InsertableFields:       []string{},
-			UpdatableFields:        []string{},
-			HiddenFields:           []string{"hidden_field"},
-			ErasedFields:           []string{},
-			RequiredOnInsertFields: []string{go_cake.FIELD_ANY},
-			RequiredOnUpdateFields: []string{go_cake.FIELD_ANY},
-			OptimizeOnInsertFields: []string{go_cake.FIELD_ANY},
-			OptimizeOnUpdateFields: []string{go_cake.FIELD_ANY},
-			Validator:              ordersValidator,
-		},
-		ResourceCallback: &go_cake.ResourceCallback{
-			AuthCallback:        checkAuth,
-			PreRequestCallback:  preRequest,
-			PostRequestCallback: postRequest,
-			FetchedDocuments:    fetchedDocuments,
-			UpdatingDocuments:   updatingDocuments,
-			UpdatedDocuments:    updatedDocuments,
-			InsertingDocuments:  insertingDocuments,
-			InsertedDocuments:   insertedDocuments,
-			DeletingDocuments:   deletingDocuments,
-			DeletedDocuments:    deletedDocuments,
-		},
-	}
+	ordersResource, err := go_cake.NewResource(
+		`^(?P<version>\/\w+)(?P<url>\/api\/orders\/?)$`,
+		"orders",
+		"orders",
+		dbDriver,
+		&models.Order{},
+		"ID",
+		"id",
+		"ETag",
+		"_etag",
+		[]string{"v1"},
+		checkAuth)
 
-	if err := ordersResource.Init(); err != nil {
+	if err != nil {
 		panic(err)
 	}
 
-	if err := restHandler.AddResource(&ordersResource); err != nil {
+	ordersResource.JSONSchemaConfig.Validator = ordersValidator
+	ordersResource.ResourceCallback.PreRequestCallback = preRequest
+	ordersResource.ResourceCallback.PostRequestCallback = postRequest
+	ordersResource.ResourceCallback.FetchedDocuments = fetchedDocuments
+	ordersResource.ResourceCallback.UpdatingDocuments = updatingDocuments
+	ordersResource.ResourceCallback.UpdatedDocuments = updatedDocuments
+	ordersResource.ResourceCallback.InsertingDocuments = insertingDocuments
+	ordersResource.ResourceCallback.InsertedDocuments = insertedDocuments
+	ordersResource.ResourceCallback.DeletingDocuments = deletingDocuments
+	ordersResource.ResourceCallback.DeletedDocuments = deletedDocuments
+
+	if err := restHandler.AddResource(ordersResource); err != nil {
 		panic(err)
 	}
 
@@ -296,59 +271,35 @@ func main() {
 		log.Panicln("Unable to create JSON validator:", err)
 	}
 
-	usersResource := go_cake.Resource{
-		Pattern:             `^(?P<version>\/\w+)(?P<url>\/api\/users\/?)$`,
-		DbPath:              "users",
-		ResourceName:        "users",
-		DatabaseDriver:      dbDriver,
-		DbModel:             &models.User{},
-		DbModelIDField:      "ID",
-		DbModelETagField:    "ETag",
-		SupportedVersion:    []string{"v1"},
-		GetAllowed:          true,
-		DeleteAllowed:       true,
-		InsertAllowed:       true,
-		UpdateAllowed:       true,
-		GetMaxOutputItems:   100,
-		InsertMaxInputItems: 100,
-		DeleteMaxInputItems: 100,
-		UpdateMaxInputItems: 100,
-		CORSConfig:          corsConfig,
-		JSONSchemaConfig: &go_cake.JSONSchemaConfig{
-			IDField:                "id",
-			ETagField:              "_etag",
-			FilterableFields:       []string{go_cake.FIELD_ANY},
-			ProjectableFields:      []string{go_cake.FIELD_ANY},
-			SortableFields:         []string{go_cake.FIELD_ANY},
-			InsertableFields:       []string{go_cake.FIELD_ANY},
-			UpdatableFields:        []string{go_cake.FIELD_ANY},
-			HiddenFields:           []string{},
-			ErasedFields:           []string{},
-			RequiredOnInsertFields: []string{go_cake.FIELD_ANY},
-			RequiredOnUpdateFields: []string{go_cake.FIELD_ANY},
-			OptimizeOnInsertFields: []string{go_cake.FIELD_ANY},
-			OptimizeOnUpdateFields: []string{go_cake.FIELD_ANY},
-			Validator:              usersValidator,
-		},
-		ResourceCallback: &go_cake.ResourceCallback{
-			AuthCallback:        checkAuth,
-			PreRequestCallback:  preRequest,
-			PostRequestCallback: postRequest,
-			FetchedDocuments:    fetchedDocuments,
-			UpdatingDocuments:   updatingDocuments,
-			UpdatedDocuments:    updatedDocuments,
-			InsertingDocuments:  insertingDocuments,
-			InsertedDocuments:   insertedDocuments,
-			DeletingDocuments:   deletingDocuments,
-			DeletedDocuments:    deletedDocuments,
-		},
-	}
+	usersResource, err := go_cake.NewResource(
+		`^(?P<version>\/\w+)(?P<url>\/api\/users\/?)$`,
+		"users",
+		"users",
+		dbDriver,
+		&models.User{},
+		"ID",
+		"id",
+		"ETag",
+		"_etag",
+		[]string{"v1"},
+		checkAuth)
 
-	if err := usersResource.Init(); err != nil {
+	if err != nil {
 		panic(err)
 	}
 
-	if err := restHandler.AddResource(&usersResource); err != nil {
+	usersResource.JSONSchemaConfig.Validator = usersValidator
+	usersResource.ResourceCallback.PreRequestCallback = preRequest
+	usersResource.ResourceCallback.PostRequestCallback = postRequest
+	usersResource.ResourceCallback.FetchedDocuments = fetchedDocuments
+	usersResource.ResourceCallback.UpdatingDocuments = updatingDocuments
+	usersResource.ResourceCallback.UpdatedDocuments = updatedDocuments
+	usersResource.ResourceCallback.InsertingDocuments = insertingDocuments
+	usersResource.ResourceCallback.InsertedDocuments = insertedDocuments
+	usersResource.ResourceCallback.DeletingDocuments = deletingDocuments
+	usersResource.ResourceCallback.DeletedDocuments = deletedDocuments
+
+	if err := restHandler.AddResource(usersResource); err != nil {
 		panic(err)
 	}
 
@@ -372,63 +323,35 @@ func main() {
 		log.Panicln("Unable to create JSON validator:", err)
 	}
 
-	productsResource := go_cake.Resource{
-		Pattern:             `^(?P<version>\/\w+)(?P<url>\/api\/products\/?)$`,
-		DbPath:              "products",
-		ResourceName:        "products",
-		DatabaseDriver:      dbDriver,
-		DbModel:             &models.Product{},
-		DbModelIDField:      "ID",
-		DbModelETagField:    "ETag",
-		SupportedVersion:    []string{"v1"},
-		GetAllowed:          true,
-		DeleteAllowed:       true,
-		InsertAllowed:       true,
-		UpdateAllowed:       true,
-		GetMaxOutputItems:   100,
-		InsertMaxInputItems: 100,
-		DeleteMaxInputItems: 100,
-		UpdateMaxInputItems: 100,
-		CORSConfig:          corsConfig,
-		JSONSchemaConfig: &go_cake.JSONSchemaConfig{
-			IDField:           "id",
-			ETagField:         "_etag",
-			FilterableFields:  []string{go_cake.FIELD_ANY},
-			ProjectableFields: []string{go_cake.FIELD_ANY},
-			SortableFields:    []string{go_cake.FIELD_ANY},
-			// InsertableFields:  []string{},
-			InsertableFields: []string{go_cake.FIELD_ANY},
-			UpdatableFields:  []string{"email"},
-			// UpdatableFields:  []string{handler.FIELD_ANY},
-			HiddenFields: []string{},
-			ErasedFields: []string{},
-			// RequiredOnInsertFields: []string{},
-			RequiredOnInsertFields: []string{go_cake.FIELD_ANY},
-			RequiredOnUpdateFields: []string{"email"},
-			// RequiredOnUpdateFields: []string{handler.FIELD_ANY},
-			OptimizeOnInsertFields: []string{go_cake.FIELD_ANY},
-			OptimizeOnUpdateFields: []string{go_cake.FIELD_ANY},
-			Validator:              productsValidator,
-		},
-		ResourceCallback: &go_cake.ResourceCallback{
-			AuthCallback:        checkAuth,
-			PreRequestCallback:  preRequest,
-			PostRequestCallback: postRequest,
-			FetchedDocuments:    fetchedDocuments,
-			UpdatingDocuments:   updatingDocuments,
-			UpdatedDocuments:    updatedDocuments,
-			InsertingDocuments:  insertingDocuments,
-			InsertedDocuments:   insertedDocuments,
-			DeletingDocuments:   deletingDocuments,
-			DeletedDocuments:    deletedDocuments,
-		},
-	}
+	productsResource, err := go_cake.NewResource(
+		`^(?P<version>\/\w+)(?P<url>\/api\/products\/?)$`,
+		"products",
+		"products",
+		dbDriver,
+		&models.Product{},
+		"ID",
+		"id",
+		"ETag",
+		"_etag",
+		[]string{"v1"},
+		checkAuth)
 
-	if err := productsResource.Init(); err != nil {
+	if err != nil {
 		panic(err)
 	}
 
-	if err := restHandler.AddResource(&productsResource); err != nil {
+	productsResource.JSONSchemaConfig.Validator = productsValidator
+	productsResource.ResourceCallback.PreRequestCallback = preRequest
+	productsResource.ResourceCallback.PostRequestCallback = postRequest
+	productsResource.ResourceCallback.FetchedDocuments = fetchedDocuments
+	productsResource.ResourceCallback.UpdatingDocuments = updatingDocuments
+	productsResource.ResourceCallback.UpdatedDocuments = updatedDocuments
+	productsResource.ResourceCallback.InsertingDocuments = insertingDocuments
+	productsResource.ResourceCallback.InsertedDocuments = insertedDocuments
+	productsResource.ResourceCallback.DeletingDocuments = deletingDocuments
+	productsResource.ResourceCallback.DeletedDocuments = deletedDocuments
+
+	if err := restHandler.AddResource(productsResource); err != nil {
 		panic(err)
 	}
 
@@ -452,62 +375,35 @@ func main() {
 		log.Panicln("Unable to create JSON validator:", err)
 	}
 
-	devicesResource := go_cake.Resource{
-		Pattern:             `^(?P<version>\/\w+)(?P<url>\/api\/devices\/?)$`,
-		DbPath:              "devices",
-		ResourceName:        "devices",
-		DatabaseDriver:      dbDriver,
-		DbModel:             &models.Device{},
-		DbModelIDField:      "ID",
-		SupportedVersion:    []string{"v1"},
-		GetAllowed:          true,
-		DeleteAllowed:       true,
-		InsertAllowed:       true,
-		UpdateAllowed:       true,
-		GetMaxOutputItems:   100,
-		InsertMaxInputItems: 100,
-		DeleteMaxInputItems: 100,
-		UpdateMaxInputItems: 100,
-		CORSConfig:          corsConfig,
-		JSONSchemaConfig: &go_cake.JSONSchemaConfig{
-			IDField:           "id",
-			FilterableFields:  []string{go_cake.FIELD_ANY},
-			ProjectableFields: []string{go_cake.FIELD_ANY},
-			SortableFields:    []string{go_cake.FIELD_ANY},
-			// InsertableFields:  []string{},
-			InsertableFields: []string{go_cake.FIELD_ANY},
-			UpdatableFields:  []string{"email"},
-			// UpdatableFields:  []string{handler.FIELD_ANY},
-			HiddenFields: []string{},
-			ErasedFields: []string{},
-			// RequiredOnInsertFields: []string{},
-			RequiredOnInsertFields: []string{go_cake.FIELD_ANY},
-			RequiredOnUpdateFields: []string{"email"},
-			// RequiredOnUpdateFields: []string{handler.FIELD_ANY},
-			OptimizeOnInsertFields: []string{go_cake.FIELD_ANY},
-			OptimizeOnUpdateFields: []string{go_cake.FIELD_ANY},
-			Validator:              devicesValidator,
-		},
-		ResourceCallback: &go_cake.ResourceCallback{
-			AuthCallback:        checkAuth,
-			PreRequestCallback:  preRequest,
-			PostRequestCallback: postRequest,
-			FetchedDocuments:    fetchedDocuments,
-			UpdatingDocuments:   updatingDocuments,
-			UpdatedDocuments:    updatedDocuments,
-			InsertingDocuments:  insertingDocuments,
-			InsertedDocuments:   insertedDocuments,
-			DeletingDocuments:   deletingDocuments,
-			DeletedDocuments:    deletedDocuments,
-		},
-	}
+	devicesResource, err := go_cake.NewResource(
+		`^(?P<version>\/\w+)(?P<url>\/api\/devices\/?)$`,
+		"devices",
+		"devices",
+		dbDriver,
+		&models.Device{},
+		"ID",
+		"",
+		"ETag",
+		"",
+		[]string{"v1"},
+		checkAuth)
 
-	if err := devicesResource.Init(); err != nil {
-		log.Printf("%T\n", err)
+	if err != nil {
 		panic(err)
 	}
 
-	if err := restHandler.AddResource(&devicesResource); err != nil {
+	productsResource.JSONSchemaConfig.Validator = devicesValidator
+	productsResource.ResourceCallback.PreRequestCallback = preRequest
+	productsResource.ResourceCallback.PostRequestCallback = postRequest
+	productsResource.ResourceCallback.FetchedDocuments = fetchedDocuments
+	productsResource.ResourceCallback.UpdatingDocuments = updatingDocuments
+	productsResource.ResourceCallback.UpdatedDocuments = updatedDocuments
+	productsResource.ResourceCallback.InsertingDocuments = insertingDocuments
+	productsResource.ResourceCallback.InsertedDocuments = insertedDocuments
+	productsResource.ResourceCallback.DeletingDocuments = deletingDocuments
+	productsResource.ResourceCallback.DeletedDocuments = deletedDocuments
+
+	if err := restHandler.AddResource(devicesResource); err != nil {
 		panic(err)
 	}
 

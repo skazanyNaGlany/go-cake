@@ -37,50 +37,94 @@ type Resource struct {
 	compiledSupportedVersion      []*regexp.Regexp
 }
 
-func (rhr *Resource) Init() error {
+func NewResource(
+	pattern string,
+	dbPath string,
+	resourceName string,
+	driver DatabaseDriver,
+	dbModel GoKateModel,
+	dbModelIDField string,
+	jsonIDField string,
+	dbModelETagField string,
+	jsonETagField string,
+	supportedVersion []string,
+	authCallback AuthAppFunc) (*Resource, error) {
+	var resource Resource
 	var err error
 
-	if err = rhr.testResource(); err != nil {
-		return err
-	}
+	resource.Pattern = pattern
+	resource.DbPath = dbPath
+	resource.ResourceName = resourceName
+	resource.DatabaseDriver = driver
+	resource.DbModel = dbModel
+	resource.DbModelIDField = dbModelIDField
+	resource.DbModelETagField = dbModelETagField
+	resource.SupportedVersion = supportedVersion
+	resource.GetAllowed = true
+	resource.DeleteAllowed = true
+	resource.InsertAllowed = true
+	resource.UpdateAllowed = true
+	resource.GetMaxOutputItems = MAX_OUTPUT_ITEMS
+	resource.InsertMaxInputItems = MAX_INPUT_ITEMS
+	resource.DeleteMaxInputItems = MAX_INPUT_ITEMS
+	resource.UpdateMaxInputItems = MAX_INPUT_ITEMS
 
-	rhr.CompiledPattern, err = regexp.Compile(rhr.Pattern)
+	resource.ResourceCallback = &ResourceCallback{
+		AuthCallback: authCallback,
+	}
+	resource.JSONSchemaConfig = &JSONSchemaConfig{
+		IDField:   jsonIDField,
+		ETagField: jsonETagField,
+	}
+	resource.CORSConfig, _ = NewDefaultCORSConfig()
+
+	resource.CompiledPattern, err = regexp.Compile(resource.Pattern)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if err = rhr.checkSchemaConfig(); err != nil {
-		return err
+	if err = resource.testResource(); err != nil {
+		return nil, err
 	}
 
-	if err = rhr.collectJSONFields(); err != nil {
-		return err
+	resource.CompiledPattern, err = regexp.Compile(resource.Pattern)
+
+	if err != nil {
+		return nil, err
 	}
 
-	if err = rhr.testResource2(); err != nil {
-		return err
+	if err = resource.checkSchemaConfig(); err != nil {
+		return nil, err
 	}
 
-	if err = rhr.checkSchemaConfigFields(); err != nil {
-		return err
+	if err = resource.collectJSONFields(); err != nil {
+		return nil, err
 	}
 
-	if err = rhr.initJSONValidator(); err != nil {
-		return err
+	if err = resource.testResource2(); err != nil {
+		return nil, err
 	}
 
-	if err = rhr.compileSupportedVersions(); err != nil {
-		return err
+	if err = resource.checkSchemaConfigFields(); err != nil {
+		return nil, err
 	}
 
-	rhr.initRanges()
-
-	if err = rhr.testModel(); err != nil {
-		return err
+	if err = resource.initJSONValidator(); err != nil {
+		return nil, err
 	}
 
-	return nil
+	if err = resource.compileSupportedVersions(); err != nil {
+		return nil, err
+	}
+
+	resource.initRanges()
+
+	if err = resource.testModel(); err != nil {
+		return nil, err
+	}
+
+	return &resource, nil
 }
 
 func (rhr *Resource) testResource() error {
