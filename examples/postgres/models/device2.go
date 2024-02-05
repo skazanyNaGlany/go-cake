@@ -18,10 +18,10 @@ type Device2 struct {
 	bun.BaseModel           `json:"-" bun:"table:device2,alias:d2"`
 	go_cake.BaseGoKateModel `json:"-" bun:"-"`
 
-	ID          int64  `json:"id,omitempty" bun:"id,pk,autoincrement"`
-	ETag        string `json:"etag,omitempty" bun:"etag"`
-	Email       string `json:"email,omitempty" bun:"email"`
-	MaxContacts int64  `json:"max_contacts,omitempty" bun:"max_contacts"`
+	ID          *int64  `json:"id,omitempty" bun:"id,pk,autoincrement"`
+	ETag        *string `json:"etag,omitempty" bun:"etag"`
+	Email       *string `json:"email,omitempty" bun:"email"`
+	MaxContacts *int64  `json:"max_contacts,omitempty" bun:"max_contacts"`
 }
 
 func (d *Device2) CreateInstance() go_cake.GoKateModel {

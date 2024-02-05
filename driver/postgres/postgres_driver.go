@@ -213,7 +213,25 @@ func (pd *PostgresDriver) Find(
 func (pd *PostgresDriver) Total(
 	model go_cake.GoKateModel,
 	where string) (uint64, go_cake.HTTPError) {
-	return 0, nil
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	modelType := fmt.Sprintf("%T", model)
+	modelSpec := pd.modelJSONTagMap[modelType]
+
+	query := pd.db.NewSelect().Table(modelSpec.dbPath)
+
+	if where != "" {
+		query = query.Where(where)
+	}
+
+	count, err := query.Count(ctx)
+
+	if err != nil {
+		return 0, go_cake.NewLowLevelDriverHTTPError(err)
+	}
+
+	return uint64(count), nil
 }
 
 func (pd *PostgresDriver) Insert(
