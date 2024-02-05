@@ -225,6 +225,8 @@ func (pd *PostgresDriver) Total(
 		query = query.Where(where)
 	}
 
+	// TODO translate query JSON fields to DB fields
+
 	count, err := query.Count(ctx)
 
 	if err != nil {
