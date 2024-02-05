@@ -2,6 +2,7 @@ package models
 
 import (
 	go_cake "github.com/skazanyNaGlany/go-cake"
+	"github.com/uptrace/bun"
 )
 
 /*
@@ -14,30 +15,13 @@ CREATE TABLE device2 (
 */
 
 type Device2 struct {
-	go_cake.BaseGoKateModel `json:"-"`
-
-	ID          *int64  `json:"id,omitempty" db:"id"`
-	ETag        *string `json:"etag,omitempty" db:"etag"`
-	Email       *string `json:"email,omitempty" db:"email"`
-	MaxContacts *int64  `json:"max_contacts,omitempty" db:"max_contacts"`
-}
-
-func (d *Device2) CreateInstance() go_cake.GoKateModel {
-	newObj := Device2{}
-
-	return &newObj
-}
-
-/*
-// old
-type Device2 struct {
-	bun.BaseModel           `bun:"table:device2,alias:d2"`
+	bun.BaseModel           `json:"-" bun:"table:device2,alias:d2"`
 	go_cake.BaseGoKateModel `json:"-" bun:"-"`
 
-	ID          *int64  `json:"id,omitempty" bun:"id,pk,autoincrement"`
-	ETag        *string `json:"etag,omitempty" bun:"etag"`
-	Email       *string `json:"email,omitempty" bun:"email"`
-	MaxContacts *int64  `json:"max_contacts,omitempty" bun:"max_contacts"`
+	ID          int64  `json:"id,omitempty" bun:"id,pk,autoincrement"`
+	ETag        string `json:"etag,omitempty" bun:"etag"`
+	Email       string `json:"email,omitempty" bun:"email"`
+	MaxContacts int64  `json:"max_contacts,omitempty" bun:"max_contacts"`
 }
 
 func (d *Device2) CreateInstance() go_cake.GoKateModel {
@@ -45,7 +29,6 @@ func (d *Device2) CreateInstance() go_cake.GoKateModel {
 
 	return &newObj
 }
-*/
 
 func (d *Device2) GetID() any {
 	return d.ID

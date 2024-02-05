@@ -2,48 +2,27 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
-	"log"
+	"time"
 
 	go_cake "github.com/skazanyNaGlany/go-cake"
 	"github.com/skazanyNaGlany/go-cake/utils"
-
-	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq"
+	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/dialect/pgdialect"
+	"github.com/uptrace/bun/driver/pgdriver"
 )
 
 type PostgresDriver struct {
-	// ConnectionString string
 	modelJSONTagMap map[string]ModelSpecs
-	// db               *bun.DB
-	db *sqlx.DB
+	db              *bun.DB
 }
 
-// func NewPostgresDriver(connectionString string, ctx context.Context) (*PostgresDriver, error) {
-func NewPostgresDriver(driverName string, dataSourceName string, ctx context.Context) (*PostgresDriver, error) {
-	var err error
+func NewPostgresDriver(connectionString string, ctx context.Context) (*PostgresDriver, error) {
+	driver := PostgresDriver{}
 
-	driver := PostgresDriver{
-		// ConnectionString: connectionString,
-	}
-
-	// //// working but buggy
-	// sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(connectionString)))
-	// driver.db = bun.NewDB(sqldb, pgdialect.New())
-
-	// config, err := pgx.ParseConfig(connectionString)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// // config.PreferSimpleProtocol = true
-
-	// sqldb := stdlib.OpenDB(*config)
-	// driver.db = bun.NewDB(sqldb, pgdialect.New())
-
-	driver.db, err = sqlx.Connect(driverName, dataSourceName)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(connectionString)))
+	driver.db = bun.NewDB(sqldb, pgdialect.New())
 
 	driver.modelJSONTagMap = make(map[string]ModelSpecs)
 
@@ -51,16 +30,12 @@ func NewPostgresDriver(driverName string, dataSourceName string, ctx context.Con
 }
 
 func (pd *PostgresDriver) Close() error {
-	// if d.client == nil {
-	// 	return nil
-	// }
+	if pd.db == nil {
+		return nil
+	}
 
-	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	// defer cancel()
-
-	// if err := d.client.Disconnect(ctx); err != nil {
-	// 	panic(err)
-	// }
+	pd.db.Close()
+	pd.db = nil
 
 	return nil
 }
@@ -188,28 +163,48 @@ func (pd *PostgresDriver) testTagMap(
 	return nil
 }
 
+func (pd *PostgresDriver) prepareResultDocuments(model go_cake.GoKateModel, howMany int) []go_cake.GoKateModel {
+	resultDocuments := make([]go_cake.GoKateModel, 0)
+
+	for howMany > 0 {
+		howMany--
+
+		resultDocuments = append(resultDocuments, model.CreateInstance())
+	}
+
+	return resultDocuments
+}
+
 func (pd *PostgresDriver) Find(
 	model go_cake.GoKateModel,
 	where, sort string,
 	page, perPage int64) ([]go_cake.GoKateModel, go_cake.HTTPError) {
-	resultDocuments := make([]go_cake.GoKateModel, 0)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-	rows, err := pd.db.Queryx("SELECT * FROM public.device2")
+	modelType := fmt.Sprintf("%T", model)
+	modelSpec := pd.modelJSONTagMap[modelType]
+
+	resultDocuments := pd.prepareResultDocuments(model, int(perPage))
+
+	query := pd.db.NewSelect().Table(modelSpec.dbPath)
+
+	if where != "" {
+		query = query.Where(where)
+	}
+
+	if sort != "" {
+		query = query.OrderExpr(sort)
+	}
+
+	query = query.Offset(int(perPage) * int(page)).Limit(int(perPage))
+
+	// TODO translate query JSON fields to DB fields
+
+	err := query.Scan(ctx, &resultDocuments)
 
 	if err != nil {
 		return nil, go_cake.NewLowLevelDriverHTTPError(err)
-	}
-
-	for rows.Next() {
-		newInstance := model.CreateInstance()
-
-		err := rows.StructScan(newInstance)
-		if err != nil {
-			newInstance.SetHTTPError(go_cake.NewLowLevelDriverHTTPError(err))
-			continue
-		}
-
-		resultDocuments = append(resultDocuments, newInstance)
 	}
 
 	return resultDocuments, nil

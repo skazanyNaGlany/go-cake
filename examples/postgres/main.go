@@ -153,20 +153,9 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	// pgx
 	dbDriver, err := postgres.NewPostgresDriver(
-		"postgres",
-		"user=postgres host=db.devbox dbname=postgres port=5432 sslmode=disable",
+		"postgres://postgres:@db.devbox:5432/postgres?sslmode=disable",
 		ctx)
-
-	// pgdriver
-	// dbDriver, err := postgres.NewPostgresDriver(
-	// 	"postgres://postgres:@db.devbox:5432/postgres?sslmode=disable",
-	// 	ctx)
-
-	// dbDriver, err := postgres.NewPostgresDriver(
-	// 	"host=db.devbox user=postgres password= dbname=postgres port=5432 sslmode=disable TimeZone=UTC",
-	// 	ctx)
 
 	if err != nil {
 		log.Panicln("Unable to init DB driver:", err)

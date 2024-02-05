@@ -24,6 +24,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/jbenet/go-base58 v0.0.0-20150317085156-6237cf65f3a6 // indirect
 	github.com/jdkato/prose v1.2.1 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/juliangruber/go-intersect v1.1.0 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
@@ -31,13 +32,21 @@ require (
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/montanaflynn/stats v0.6.3 // indirect
 	github.com/stretchr/testify v1.8.1 // indirect
+	github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc // indirect
+	github.com/uptrace/bun v1.1.17 // indirect
+	github.com/uptrace/bun/dialect/pgdialect v1.1.17 // indirect
+	github.com/uptrace/bun/driver/pgdriver v1.1.17 // indirect
+	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
+	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
 	golang.org/x/crypto v0.18.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
+	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	gopkg.in/neurosnap/sentences.v1 v1.0.7 // indirect
 	k8s.io/client-go v0.24.1 // indirect
+	mellium.im/sasl v0.3.1 // indirect
 )
