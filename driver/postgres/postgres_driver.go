@@ -285,6 +285,38 @@ func (pd *PostgresDriver) Delete(
 	model go_cake.GoKateModel,
 	documents []go_cake.GoKateModel,
 ) go_cake.HTTPError {
+	if len(documents) == 0 {
+		return nil
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	for _, item := range documents {
+		if item.GetHTTPError() != nil {
+			continue
+		}
+
+		// update etag
+		item.CreateETag()
+
+		// TODO update by etag
+
+		result, err := pd.db.NewDelete().Model(item).WherePK().Exec(ctx)
+
+		if err != nil {
+			item.SetHTTPError(go_cake.NewLowLevelDriverHTTPError(err))
+			continue
+		}
+
+		affectedRows, _ := result.RowsAffected()
+
+		if affectedRows <= 0 {
+			item.SetHTTPError(go_cake.NewObjectNotFoundHTTPError(nil))
+			continue
+		}
+	}
+
 	return nil
 }
 
@@ -292,6 +324,38 @@ func (pd *PostgresDriver) Update(
 	model go_cake.GoKateModel,
 	documents []go_cake.GoKateModel,
 ) go_cake.HTTPError {
+	if len(documents) == 0 {
+		return nil
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	for _, item := range documents {
+		if item.GetHTTPError() != nil {
+			continue
+		}
+
+		// update etag
+		item.CreateETag()
+
+		// TODO update by etag
+
+		result, err := pd.db.NewUpdate().Model(item).WherePK().Exec(ctx)
+
+		if err != nil {
+			item.SetHTTPError(go_cake.NewLowLevelDriverHTTPError(err))
+			continue
+		}
+
+		affectedRows, _ := result.RowsAffected()
+
+		if affectedRows <= 0 {
+			item.SetHTTPError(go_cake.NewObjectNotFoundHTTPError(nil))
+			continue
+		}
+	}
+
 	return nil
 }
 
