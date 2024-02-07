@@ -200,6 +200,7 @@ func (pd *PostgresDriver) Find(
 	query = query.Offset(int(perPage) * int(page)).Limit(int(perPage))
 
 	// TODO translate query JSON fields to DB fields
+	// for "where" and "sort"
 
 	err := query.Scan(ctx, &resultDocuments)
 
@@ -226,6 +227,7 @@ func (pd *PostgresDriver) Total(
 	}
 
 	// TODO translate query JSON fields to DB fields
+	// for "where"
 
 	count, err := query.Count(ctx)
 
