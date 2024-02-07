@@ -73,8 +73,13 @@ func NewResource(
 		AuthCallback: authCallback,
 	}
 	resource.JSONSchemaConfig = &JSONSchemaConfig{
-		IDField:   jsonIDField,
-		ETagField: jsonETagField,
+		IDField:           jsonIDField,
+		ETagField:         jsonETagField,
+		FilterableFields:  []string{FIELD_ANY},
+		ProjectableFields: []string{FIELD_ANY},
+		SortableFields:    []string{FIELD_ANY},
+		InsertableFields:  []string{FIELD_ANY},
+		UpdatableFields:   []string{FIELD_ANY},
 	}
 	resource.CORSConfig, _ = NewDefaultCORSConfig()
 

@@ -49,6 +49,7 @@ type MalformedWhereHTTPError struct{ BaseHTTPError }
 type MalformedSortHTTPError struct{ BaseHTTPError }
 type MalformedProjectionHTTPError struct{ BaseHTTPError }
 type ObjectNotFoundHTTPError struct{ BaseHTTPError }
+type ObjectNotAffectedHTTPError struct{ BaseHTTPError }
 type TooManyOBjectsHTTPError struct{ BaseHTTPError }
 type UnsupportedVersionHTTPError struct{ BaseHTTPError }
 
@@ -379,6 +380,15 @@ func NewObjectNotFoundHTTPError(internalError error) HTTPError {
 
 	e.StatusCode = http.StatusNotFound
 	e.StatusMessage = e.FormatStatusMessage("Object not found", e, internalError)
+
+	return e
+}
+
+func NewObjectNotAffectedHTTPError(internalError error) HTTPError {
+	e := ObjectNotAffectedHTTPError{}
+
+	e.StatusCode = http.StatusInternalServerError
+	e.StatusMessage = e.FormatStatusMessage("Object not affected (not inserted, not updated, not deleted)", e, internalError)
 
 	return e
 }

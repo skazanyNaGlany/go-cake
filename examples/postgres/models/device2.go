@@ -2,6 +2,7 @@ package models
 
 import (
 	go_cake "github.com/skazanyNaGlany/go-cake"
+	"github.com/skazanyNaGlany/go-cake/utils"
 	"github.com/uptrace/bun"
 )
 
@@ -46,14 +47,20 @@ func (d *Device2) GetID() any {
 // 	return nil
 // }
 
-// func (d *Device2) CreateETag() any {
-// 	return nil
-// }
+func (d *Device2) CreateETag() any {
+	etag := utils.StringUtilsInstance.NewUUID()
 
-// func (d *Device2) GetETag() any {
-// 	return nil
-// }
+	d.ETag = &etag
 
-// func (d *Device2) SetETag(etag string) error {
-// 	return nil
-// }
+	return d.ETag
+}
+
+func (d *Device2) GetETag() any {
+	return d.ETag
+}
+
+func (d *Device2) SetETag(etag string) error {
+	d.ETag = &etag
+
+	return nil
+}

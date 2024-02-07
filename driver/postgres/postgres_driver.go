@@ -240,6 +240,44 @@ func (pd *PostgresDriver) Insert(
 	model go_cake.GoKateModel,
 	documents []go_cake.GoKateModel,
 ) go_cake.HTTPError {
+	if len(documents) == 0 {
+		return nil
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	for _, item := range documents {
+		if item.GetHTTPError() != nil {
+			continue
+		}
+
+		// update etag
+		item.CreateETag()
+
+		result, err := pd.db.NewInsert().Model(item).Exec(ctx)
+
+		if err != nil {
+			item.SetHTTPError(go_cake.NewLowLevelDriverHTTPError(err))
+			continue
+		}
+
+		affectedRows, _ := result.RowsAffected()
+
+		if affectedRows <= 0 {
+			item.SetHTTPError(go_cake.NewObjectNotAffectedHTTPError(nil))
+			continue
+		}
+
+		insertedId, _ := result.LastInsertId()
+		idStr := fmt.Sprintf("%v", insertedId)
+
+		if idStr == "" {
+			item.SetHTTPError(go_cake.NewObjectNotAffectedHTTPError(nil))
+			continue
+		}
+	}
+
 	return nil
 }
 
