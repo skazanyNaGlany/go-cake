@@ -16,7 +16,7 @@ CREATE TABLE device2 (
 */
 
 type Device2 struct {
-	bun.BaseModel           `json:"-" bun:"table:device2,alias:d2"`
+	bun.BaseModel           `json:"-" bun:"table:device2"`
 	go_cake.BaseGoKateModel `json:"-" bun:"-"`
 
 	ID          *int64  `json:"id,omitempty" bun:"id,pk,autoincrement"`
