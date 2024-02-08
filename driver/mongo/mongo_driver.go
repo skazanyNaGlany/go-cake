@@ -487,7 +487,7 @@ func (d *MongoDriver) Delete(
 		}
 
 		if result.DeletedCount > 1 {
-			item.SetHTTPError(go_cake.NewTooManyOBjectsHTTPError(nil))
+			item.SetHTTPError(go_cake.NewTooManyAffectedObjectsHTTPError(nil))
 			continue
 		}
 
@@ -539,7 +539,7 @@ func (d *MongoDriver) Update(
 		}
 
 		if result.MatchedCount > 1 {
-			item.SetHTTPError(go_cake.NewTooManyOBjectsHTTPError(nil))
+			item.SetHTTPError(go_cake.NewTooManyAffectedObjectsHTTPError(nil))
 			continue
 		}
 

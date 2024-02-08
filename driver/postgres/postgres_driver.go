@@ -18,6 +18,9 @@ type PostgresDriver struct {
 	db              *bun.DB
 }
 
+// New PostgresDriver using github.com/uptrace/bun/driver/pgdriver driver
+// NOTE pgdriver does not support LastInsertId(), it will fill ID field
+// value automatically
 func NewPostgresDriver(connectionString string, ctx context.Context) (*PostgresDriver, error) {
 	driver := PostgresDriver{}
 
@@ -264,18 +267,20 @@ func (pd *PostgresDriver) Insert(
 			continue
 		}
 
-		affectedRows, _ := result.RowsAffected()
+		affectedRows, err := result.RowsAffected()
+
+		if err != nil {
+			item.SetHTTPError(go_cake.NewLowLevelDriverHTTPError(err))
+			continue
+		}
 
 		if affectedRows <= 0 {
 			item.SetHTTPError(go_cake.NewObjectNotAffectedHTTPError(nil))
 			continue
 		}
 
-		insertedId, _ := result.LastInsertId()
-		idStr := fmt.Sprintf("%v", insertedId)
-
-		if idStr == "" {
-			item.SetHTTPError(go_cake.NewObjectNotAffectedHTTPError(nil))
+		if affectedRows > 1 {
+			item.SetHTTPError(go_cake.NewTooManyAffectedObjectsHTTPError(nil))
 			continue
 		}
 	}

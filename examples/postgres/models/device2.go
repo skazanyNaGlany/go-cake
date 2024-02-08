@@ -1,6 +1,8 @@
 package models
 
 import (
+	"strconv"
+
 	go_cake "github.com/skazanyNaGlany/go-cake"
 	"github.com/skazanyNaGlany/go-cake/utils"
 	"github.com/uptrace/bun"
@@ -35,17 +37,17 @@ func (d *Device2) GetID() any {
 	return d.ID
 }
 
-// func (d *Device2) SetID(id string) error {
-// 	_id, err := primitive.ObjectIDFromHex(id)
+func (d *Device2) SetID(id string) error {
+	i, err := strconv.ParseInt(id, 10, 64)
 
-// 	if err != nil {
-// 		return err
-// 	}
+	if err != nil {
+		return err
+	}
 
-// 	d.ID = &_id
+	d.ID = &i
 
-// 	return nil
-// }
+	return nil
+}
 
 func (d *Device2) CreateETag() any {
 	etag := utils.StringUtilsInstance.NewUUID()

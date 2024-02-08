@@ -50,7 +50,7 @@ type MalformedSortHTTPError struct{ BaseHTTPError }
 type MalformedProjectionHTTPError struct{ BaseHTTPError }
 type ObjectNotFoundHTTPError struct{ BaseHTTPError }
 type ObjectNotAffectedHTTPError struct{ BaseHTTPError }
-type TooManyOBjectsHTTPError struct{ BaseHTTPError }
+type TooManyAffectedObjectsHTTPError struct{ BaseHTTPError }
 type UnsupportedVersionHTTPError struct{ BaseHTTPError }
 
 func (e BaseHTTPError) Error() string {
@@ -393,8 +393,8 @@ func NewObjectNotAffectedHTTPError(internalError error) HTTPError {
 	return e
 }
 
-func NewTooManyOBjectsHTTPError(internalError error) HTTPError {
-	e := TooManyOBjectsHTTPError{}
+func NewTooManyAffectedObjectsHTTPError(internalError error) HTTPError {
+	e := TooManyAffectedObjectsHTTPError{}
 
 	e.StatusCode = http.StatusRequestEntityTooLarge
 	e.StatusMessage = e.FormatStatusMessage("Affected more than one object with the same ID", e, internalError)
