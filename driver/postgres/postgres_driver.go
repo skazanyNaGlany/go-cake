@@ -205,6 +205,7 @@ func (pd *PostgresDriver) selectQueryJSONFieldsToBun(
 		return nil, go_cake.NewMalformedWhereHTTPError(err)
 	}
 
+	// FIRST - replace all fields names from JSON to BUN
 	walker := &walk.AstWalker{
 		Fn: func(ctx any, node any) (stop bool) {
 			unresolvedName, isUnresolvedName := node.(*tree.UnresolvedName)
@@ -243,6 +244,7 @@ func (pd *PostgresDriver) selectQueryJSONFieldsToBun(
 	var offset *int64
 	var limit *int64
 
+	// SECOND - grab the new WHERE, ORDER BY and old OFFSET and LIMIT
 	walker2 := &walk.AstWalker{
 		Fn: func(ctx any, node any) (stop bool) {
 			treeWhere, isTreeWhere := node.(*tree.Where)
@@ -295,6 +297,8 @@ func (pd *PostgresDriver) selectQueryJSONFieldsToBun(
 	// log.Println("offset", offset)
 	// log.Println("limit", limit)
 
+	// THIRDLY - rebuild the whole select query since
+	// all these ORMs and parsing SQL libs su..s
 	translatedQuery := pd.db.NewSelect().Table(modelSpecs.dbPath)
 
 	if newWhere != "" {
