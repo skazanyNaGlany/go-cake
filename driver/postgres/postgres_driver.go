@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/auxten/postgresql-parser/pkg/sql/parser"
@@ -195,38 +196,17 @@ func (pd *PostgresDriver) modelSpecsJSONToBUNField(
 	return ""
 }
 
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-
 func (pd *PostgresDriver) selectQueryJSONFieldsToBun(
 	query *bun.SelectQuery,
-	modelSpecs *ModelSpecs) (*bun.RawQuery, error) {
+	modelSpecs *ModelSpecs) (*bun.SelectQuery, go_cake.HTTPError) {
 	statements, err := parser.Parse(query.String())
 
 	if err != nil {
-		return nil, err
+		return nil, go_cake.NewMalformedWhereHTTPError(err)
 	}
 
 	walker := &walk.AstWalker{
 		Fn: func(ctx any, node any) (stop bool) {
-			// log.Println("walker", ctx, node)
-			// log.Printf("%v %v %T %T\n", ctx, node, ctx, node)
 			unresolvedName, isUnresolvedName := node.(*tree.UnresolvedName)
 
 			if !isUnresolvedName {
@@ -252,40 +232,88 @@ func (pd *PostgresDriver) selectQueryJSONFieldsToBun(
 	_, err = walker.Walk(statements, nil)
 
 	if err != nil {
-		return nil, err
+		return nil, go_cake.NewMalformedWhereHTTPError(err)
 	}
 
-	//////////////////////
-	//////////////////////
-	//////////////////////
-	//////////////////////
-	//////////////////////
-	//////////////////////
-	//////////////////////
+	// log.Println("statements", statements)
 
-	// walker2 := &walk.AstWalker{
-	// 	Fn: func(ctx any, node any) (stop bool) {
-	// 		// log.Println("walker", ctx, node)
-	// 		log.Printf("ctx=%v, node=%v, ctx=%T, node=%T\n", ctx, node, ctx, node)
-	// 		// log.Printf("node type %T, %v", node, node)
+	newWhere := ""
+	newOrderBy := ""
+	countNewWhere := 0
+	var offset *int64
+	var limit *int64
 
-	// 		// treeOrder, isTreeOrder := node.(*tree.Order)
+	walker2 := &walk.AstWalker{
+		Fn: func(ctx any, node any) (stop bool) {
+			treeWhere, isTreeWhere := node.(*tree.Where)
+			treeOrder, isTreeOrder := node.(*tree.Order)
+			treeLimit, isTreeLimit := node.(*tree.Limit)
 
-	// 		return false
-	// 	},
-	// }
+			if isTreeWhere {
+				newWhere = treeWhere.Expr.String()
 
-	// _, err = walker2.Walk(statements, nil)
+				countNewWhere++
+			} else if isTreeOrder {
+				formatter := tree.NewFmtCtx(tree.FmtSimple)
+				treeOrder.Format(formatter)
 
-	// if err != nil {
-	// 	return nil, err
-	// }
+				if newOrderBy != "" {
+					newOrderBy += ", "
+				}
 
-	return pd.db.NewRaw(statements.String()), nil
+				newOrderBy += formatter.String()
+			} else if isTreeLimit {
+				if treeLimit.Count != nil {
+					parsedLimit, _ := strconv.ParseInt(treeLimit.Count.String(), 10, 64)
 
-	// log.Println(statements.String())
+					limit = &parsedLimit
+				}
 
-	// return query, nil
+				if treeLimit.Offset != nil {
+					parsedOffset, _ := strconv.ParseInt(treeLimit.Offset.String(), 10, 64)
+
+					offset = &parsedOffset
+				}
+			}
+
+			return false
+		},
+	}
+
+	_, err = walker2.Walk(statements, nil)
+
+	if err != nil {
+		return nil, go_cake.NewMalformedWhereHTTPError(err)
+	}
+
+	if countNewWhere > 1 {
+		return nil, go_cake.NewMalformedWhereHTTPError(nil)
+	}
+
+	// log.Println("newWhere", newWhere)
+	// log.Println("newOrderBy", newOrderBy)
+	// log.Println("offset", offset)
+	// log.Println("limit", limit)
+
+	translatedQuery := pd.db.NewSelect().Table(modelSpecs.dbPath)
+
+	if newWhere != "" {
+		translatedQuery.Where(newWhere)
+	}
+
+	if newOrderBy != "" {
+		translatedQuery.OrderExpr(newOrderBy)
+	}
+
+	if offset != nil {
+		translatedQuery.Offset(int(*offset))
+	}
+
+	if limit != nil {
+		translatedQuery.Limit(int(*limit))
+	}
+
+	return translatedQuery, nil
 }
 
 func (pd *PostgresDriver) Find(
@@ -312,10 +340,13 @@ func (pd *PostgresDriver) Find(
 
 	query = query.Offset(int(perPage) * int(page)).Limit(int(perPage))
 
-	// TODO translate query JSON fields to DB fields
-	// for "where" and "sort"
+	translatedQuery, httpErr := pd.selectQueryJSONFieldsToBun(query, &modelSpec)
 
-	err := query.Scan(ctx, &resultDocuments)
+	if httpErr != nil {
+		return nil, httpErr
+	}
+
+	err := translatedQuery.Scan(ctx, &resultDocuments)
 
 	if err != nil {
 		return nil, go_cake.NewLowLevelDriverHTTPError(err)
@@ -327,35 +358,32 @@ func (pd *PostgresDriver) Find(
 func (pd *PostgresDriver) Total(
 	model go_cake.GoKateModel,
 	where string) (uint64, go_cake.HTTPError) {
-	return uint64(0), nil
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	modelType := fmt.Sprintf("%T", model)
+	modelSpec := pd.modelJSONTagMap[modelType]
+
+	query := pd.db.NewSelect().Table(modelSpec.dbPath)
+
+	if where != "" {
+		query = query.Where(where)
+	}
+
+	translatedQuery, httpErr := pd.selectQueryJSONFieldsToBun(query, &modelSpec)
+
+	if httpErr != nil {
+		return 0, httpErr
+	}
+
+	count, err := translatedQuery.Count(ctx)
+
+	if err != nil {
+		return 0, go_cake.NewLowLevelDriverHTTPError(err)
+	}
+
+	return uint64(count), nil
 }
-
-// func (pd *PostgresDriver) Total(
-// 	model go_cake.GoKateModel,
-// 	where string) (uint64, go_cake.HTTPError) {
-// 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-// 	defer cancel()
-
-// 	modelType := fmt.Sprintf("%T", model)
-// 	modelSpec := pd.modelJSONTagMap[modelType]
-
-// 	query := pd.db.NewSelect().Table(modelSpec.dbPath)
-
-// 	if where != "" {
-// 		query = query.Where(where)
-// 	}
-
-// 	// TODO translate query JSON fields to DB fields
-// 	// for "where"
-
-// 	count, err := query.Count(ctx)
-
-// 	if err != nil {
-// 		return 0, go_cake.NewLowLevelDriverHTTPError(err)
-// 	}
-
-// 	return uint64(count), nil
-// }
 
 func (pd *PostgresDriver) Insert(
 	model go_cake.GoKateModel,

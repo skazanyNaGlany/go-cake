@@ -183,7 +183,7 @@ func main() {
 		dbDriver,
 		&models.Device2{},
 		"ID",
-		"id",
+		"_id",
 		"",
 		"",
 		[]string{"v1"},
