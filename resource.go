@@ -2,7 +2,6 @@ package go_cake
 
 import (
 	"fmt"
-	"log"
 	"regexp"
 
 	"github.com/skazanyNaGlany/go-cake/utils"
@@ -206,7 +205,9 @@ func (rhr *Resource) collectJSONFields() error {
 		rhr.DbModelJSONFields = append(rhr.DbModelJSONFields, fieldNameInJsonTag)
 
 		if fieldNameInJsonTag != jsonIdField && fieldNameInJsonTag != jsonEtagField {
-			rhr.DbModelJSONFieldsNoReserved = append(rhr.DbModelJSONFieldsNoReserved, fieldNameInJsonTag)
+			rhr.DbModelJSONFieldsNoReserved = append(
+				rhr.DbModelJSONFieldsNoReserved,
+				fieldNameInJsonTag)
 		}
 	}
 
@@ -280,9 +281,9 @@ func (rhr *Resource) checkSchemaConfigFields() error {
 		}
 
 		if !funk.ContainsString(rhr.DbModelJSONFields, iField) {
-			log.Println("allFields", allFields)
-			log.Println("rhr.DbModelJSONFields", rhr.DbModelJSONFields)
-			log.Println("iField", iField)
+			// log.Println("allFields", allFields)
+			// log.Println("rhr.DbModelJSONFields", rhr.DbModelJSONFields)
+			// log.Println("iField", iField)
 
 			return SchemaConfigUnknownFieldError{
 				BaseError{Message: fmt.Sprintf("Unknown field %v in %T model", iField, rhr.DbModel)}}

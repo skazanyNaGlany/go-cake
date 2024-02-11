@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/auxten/postgresql-parser/pkg/sql/parser"
+	"github.com/auxten/postgresql-parser/pkg/sql/sem/tree"
+	"github.com/auxten/postgresql-parser/pkg/walk"
 	go_cake "github.com/skazanyNaGlany/go-cake"
 	"github.com/skazanyNaGlany/go-cake/utils"
 	"github.com/uptrace/bun"
@@ -89,6 +92,8 @@ func (pd *PostgresDriver) TestModel(
 	if err = pd.testTagMap(idField, etagField, model, tagMap); err != nil {
 		return err
 	}
+
+	// log.Println("tagMap", tagMap)
 
 	pd.modelJSONTagMap[modelType] = ModelSpecs{
 		model:     model,
@@ -178,6 +183,111 @@ func (pd *PostgresDriver) prepareResultDocuments(model go_cake.GoKateModel, howM
 	return resultDocuments
 }
 
+func (pd *PostgresDriver) modelSpecsJSONToBUNField(
+	jsonField string,
+	modelSpecs *ModelSpecs) string {
+	for _, specs := range modelSpecs.tagMap {
+		if specs["json"] == jsonField {
+			return specs["bun"]
+		}
+	}
+
+	return ""
+}
+
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+
+func (pd *PostgresDriver) selectQueryJSONFieldsToBun(
+	query *bun.SelectQuery,
+	modelSpecs *ModelSpecs) (*bun.RawQuery, error) {
+	statements, err := parser.Parse(query.String())
+
+	if err != nil {
+		return nil, err
+	}
+
+	walker := &walk.AstWalker{
+		Fn: func(ctx any, node any) (stop bool) {
+			// log.Println("walker", ctx, node)
+			// log.Printf("%v %v %T %T\n", ctx, node, ctx, node)
+			unresolvedName, isUnresolvedName := node.(*tree.UnresolvedName)
+
+			if !isUnresolvedName {
+				return false
+			}
+
+			if unresolvedName.NumParts < 1 {
+				return false
+			}
+
+			bunName := pd.modelSpecsJSONToBUNField(unresolvedName.Parts[0], modelSpecs)
+
+			if bunName == "" {
+				return false
+			}
+
+			unresolvedName.Parts[0] = bunName
+
+			return false
+		},
+	}
+
+	_, err = walker.Walk(statements, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	//////////////////////
+	//////////////////////
+	//////////////////////
+	//////////////////////
+	//////////////////////
+	//////////////////////
+	//////////////////////
+
+	// walker2 := &walk.AstWalker{
+	// 	Fn: func(ctx any, node any) (stop bool) {
+	// 		// log.Println("walker", ctx, node)
+	// 		log.Printf("ctx=%v, node=%v, ctx=%T, node=%T\n", ctx, node, ctx, node)
+	// 		// log.Printf("node type %T, %v", node, node)
+
+	// 		// treeOrder, isTreeOrder := node.(*tree.Order)
+
+	// 		return false
+	// 	},
+	// }
+
+	// _, err = walker2.Walk(statements, nil)
+
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	return pd.db.NewRaw(statements.String()), nil
+
+	// log.Println(statements.String())
+
+	// return query, nil
+}
+
 func (pd *PostgresDriver) Find(
 	model go_cake.GoKateModel,
 	where, sort string,
@@ -217,29 +327,35 @@ func (pd *PostgresDriver) Find(
 func (pd *PostgresDriver) Total(
 	model go_cake.GoKateModel,
 	where string) (uint64, go_cake.HTTPError) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	modelType := fmt.Sprintf("%T", model)
-	modelSpec := pd.modelJSONTagMap[modelType]
-
-	query := pd.db.NewSelect().Table(modelSpec.dbPath)
-
-	if where != "" {
-		query = query.Where(where)
-	}
-
-	// TODO translate query JSON fields to DB fields
-	// for "where"
-
-	count, err := query.Count(ctx)
-
-	if err != nil {
-		return 0, go_cake.NewLowLevelDriverHTTPError(err)
-	}
-
-	return uint64(count), nil
+	return uint64(0), nil
 }
+
+// func (pd *PostgresDriver) Total(
+// 	model go_cake.GoKateModel,
+// 	where string) (uint64, go_cake.HTTPError) {
+// 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+// 	defer cancel()
+
+// 	modelType := fmt.Sprintf("%T", model)
+// 	modelSpec := pd.modelJSONTagMap[modelType]
+
+// 	query := pd.db.NewSelect().Table(modelSpec.dbPath)
+
+// 	if where != "" {
+// 		query = query.Where(where)
+// 	}
+
+// 	// TODO translate query JSON fields to DB fields
+// 	// for "where"
+
+// 	count, err := query.Count(ctx)
+
+// 	if err != nil {
+// 		return 0, go_cake.NewLowLevelDriverHTTPError(err)
+// 	}
+
+// 	return uint64(count), nil
+// }
 
 func (pd *PostgresDriver) Insert(
 	model go_cake.GoKateModel,

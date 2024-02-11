@@ -80,7 +80,7 @@ func (e BaseHTTPError) logError(childErr HTTPError, object any) {
 
 func (e *BaseHTTPError) FormatStatusMessage(message string, baseError, internalError error) string {
 	baseErrorType := utils.StructUtilsInstance.GetCleanType(baseError)
-	baseErrorType = strings.Replace(baseErrorType, "HTTPError", "", 1)
+	// baseErrorType = strings.Replace(baseErrorType, "HTTPError", "", 1)
 
 	formatted := fmt.Sprintf("%s: %s", baseErrorType, message)
 	formatted = strings.TrimSpace(formatted)

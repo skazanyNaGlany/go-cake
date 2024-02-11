@@ -153,6 +153,17 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
+	// dbDriver, err := postgres.NewPostgresDriver(
+	// 	"host=db.devbox user=postgres password= dbname=postgres port=5432 sslmode=disable TimeZone=Asia/Shanghai",
+	// 	ctx)
+
+	// if err != nil {
+	// 	log.Panicln("Unable to init DB driver:", err)
+	// }
+
+	// defer dbDriver.Close()
+
+	// BUN
 	dbDriver, err := postgres.NewPostgresDriver(
 		"postgres://postgres:@db.devbox:5432/postgres?sslmode=disable",
 		ctx)
@@ -195,6 +206,38 @@ func main() {
 	if err := restHandler.AddResource(devicesResource); err != nil {
 		panic(err)
 	}
+	/////////////////
+
+	// usersResource, err := go_cake.NewResource(
+	// 	`^(?P<version>\/\w+)(?P<url>\/api\/users2\/?)$`,
+	// 	"public.user2",
+	// 	"users2",
+	// 	dbDriver,
+	// 	&models.User2{},
+	// 	"ID",
+	// 	"id",
+	// 	"",
+	// 	"",
+	// 	[]string{"v1"},
+	// 	checkAuth)
+
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	// usersResource.ResourceCallback.PreRequestCallback = preRequest
+	// usersResource.ResourceCallback.PostRequestCallback = postRequest
+	// usersResource.ResourceCallback.FetchedDocuments = fetchedDocuments
+	// usersResource.ResourceCallback.UpdatingDocuments = updatingDocuments
+	// usersResource.ResourceCallback.UpdatedDocuments = updatedDocuments
+	// usersResource.ResourceCallback.InsertingDocuments = insertingDocuments
+	// usersResource.ResourceCallback.InsertedDocuments = insertedDocuments
+	// usersResource.ResourceCallback.DeletingDocuments = deletingDocuments
+	// usersResource.ResourceCallback.DeletedDocuments = deletedDocuments
+
+	// if err := restHandler.AddResource(usersResource); err != nil {
+	// 	panic(err)
+	// }
 
 	log.Println("Ready")
 

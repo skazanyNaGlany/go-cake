@@ -334,3 +334,165 @@ Dla zdecydowanych darmowa dostawa na terenie trójmiasta (bez wniesienia).
 
 Możliwość obejrzenia online przez WhatsAppa.
 
+
+
+
+
+
+
+
+2024/02/08 21:46:36 SELECT * FROM "public"."device2" ORDER BY id DESC LIMIT 5
+2024/02/08 21:46:36 {"version":160001,"stmts":[{"stmt":{"SelectStmt":{"targetList":[{"ResTarget":{"val":{"ColumnRef":{"fields":[{"A_Star":{}}],"location":7}},"location":7}}],"fromClause":[{"RangeVar":{"schemaname":"public","relname":"device2","inh":true,"relpersistence":"p","location":14}}],"sortClause":[{"SortBy":{"node":{"ColumnRef":{"fields":[{"String":{"sval":"id"}}],"location":42}},"sortby_dir":"SORTBY_DESC","sortby_nulls":"SORTBY_NULLS_DEFAULT","location":-1}}],"limitCount":{"A_Const":{"ival":{"ival":5},"location":56}},"limitOption":"LIMIT_OPTION_COUNT","op":"SETOP_NONE"}}}]}
+
+
+
+
+
+
+
+2024/02/10 17:22:58 >>> 58621c8403d24fa9afbe603f47d37ba9 GET /v1/api/devices2?where=id%20%3D%201&sort=email%20DESC
+2024/02/10 17:22:58 SELECT * FROM "public"."device2" WHERE (id = 1) ORDER BY email DESC LIMIT 1000
+2024/02/10 17:22:58 {"version":160001,"stmts":[{"stmt":{"SelectStmt":{"targetList":[{"ResTarget":{"val":{"ColumnRef":{"fields":[{"A_Star":{}}],"location":7}},"location":7}}],"fromClause":[{"RangeVar":{"schemaname":"public","relname":"device2","inh":true,"relpersistence":"p","location":14}}],"whereClause":{"A_Expr":{"kind":"AEXPR_OP","name":[{"String":{"sval":"="}}],"lexpr":{"ColumnRef":{"fields":[{"String":{"sval":"id"}}],"location":40}},"rexpr":{"A_Const":{"ival":{"ival":1},"location":45}},"location":43}},"sortClause":[{"SortBy":{"node":{"ColumnRef":{"fields":[{"String":{"sval":"email"}}],"location":57}},"sortby_dir":"SORTBY_DESC","sortby_nulls":"SORTBY_NULLS_DEFAULT","location":-1}}],"limitCount":{"A_Const":{"ival":{"ival":1000},"location":74}},"limitOption":"LIMIT_OPTION_COUNT","op":"SETOP_NONE"}}}]}
+2024/02/10 17:22:58 fetched documents &{{} {<nil>} 0xc000396008 0xc00033e0b0 0xc00033e0c0 0xc000396030}
+2024/02/10 17:22:58 <<< 58621c8403d24fa9afbe603f47d37ba9 GET /v1/api/devices2?where=id%20%3D%201&sort=email%20DESC [200]
+
+
+
+
+
+
+{
+  "version": 160001,
+  "stmts": [
+    {
+      "stmt": {
+        "SelectStmt": {
+          "targetList": [
+            {
+              "ResTarget": {
+                "val": {
+                  "ColumnRef": {
+                    "fields": [
+                      {
+                        "A_Star": {
+                          
+                        }
+                      }
+                    ],
+                    "location": 7
+                  }
+                },
+                "location": 7
+              }
+            }
+          ],
+          "fromClause": [
+            {
+              "RangeVar": {
+                "schemaname": "public",
+                "relname": "device2",
+                "inh": true,
+                "relpersistence": "p",
+                "location": 14
+              }
+            }
+          ],
+          "whereClause": {
+            "A_Expr": {
+              "kind": "AEXPR_OP",
+              "name": [
+                {
+                  "String": {
+                    "sval": "="
+                  }
+                }
+              ],
+              "lexpr": {
+                "ColumnRef": {
+                  "fields": [
+                    {
+                      "String": {
+                        "sval": "id"
+                      }
+                    }
+                  ],
+                  "location": 40
+                }
+              },
+              "rexpr": {
+                "A_Const": {
+                  "ival": {
+                    "ival": 1
+                  },
+                  "location": 45
+                }
+              },
+              "location": 43
+            }
+          },
+          "sortClause": [
+            {
+              "SortBy": {
+                "node": {
+                  "ColumnRef": {
+                    "fields": [
+                      {
+                        "String": {
+                          "sval": "email"
+                        }
+                      }
+                    ],
+                    "location": 57
+                  }
+                },
+                "sortby_dir": "SORTBY_DESC",
+                "sortby_nulls": "SORTBY_NULLS_DEFAULT",
+                "location": -1
+              }
+            }
+          ],
+          "limitCount": {
+            "A_Const": {
+              "ival": {
+                "ival": 1000
+              },
+              "location": 74
+            }
+          },
+          "limitOption": "LIMIT_OPTION_COUNT",
+          "op": "SETOP_NONE"
+        }
+      }
+    }
+  ]
+}
+
+
+
+
+map[stmts:[map[stmt:map[SelectStmt:map[fromClause:[map[RangeVar:map[inh:true location:14 relname:device2 relpersistence:p schemaname:public]]] limitCount:map[A_Const:map[ival:map[ival:1000] location:74]] limitOption:LIMIT_OPTION_COUNT op:SETOP_NONE sortClause:[map[SortBy:map[location:-1 node:map[ColumnRef:map[fields:[map[String:map[sval:email]]] location:57]] sortby_dir:SORTBY_DESC sortby_nulls:SORTBY_NULLS_DEFAULT]]] targetList:[map[ResTarget:map[location:7 val:map[ColumnRef:map[fields:[map[A_Star:map[]]] location:7]]]]] whereClause:map[A_Expr:map[kind:AEXPR_OP lexpr:map[ColumnRef:map[fields:[map[String:map[sval:id]]] location:40]] location:43 name:[map[String:map[sval:=]]] rexpr:map[A_Const:map[ival:map[ival:1] location:45]]]]]]]] version:160001]
+
+
+
+treeMao2 map[stmts:[map[stmt:map[SelectStmt:map[fromClause:[map[RangeVar:map[inh:true location:14 relname:device2 relpersistence:p schemaname:public]]] limitCount:map[A_Const:map[ival:map[ival:1000] location:76]] limitOption:LIMIT_OPTION_COUNT op:SETOP_NONE sortClause:[map[SortBy:map[location:-1 node:map[ColumnRef:map[fields:[map[String:map[sval:_email]]] location:58]] sortby_dir:SORTBY_DESC sortby_nulls:SORTBY_NULLS_DEFAULT]]] targetList:[map[ResTarget:map[location:7 val:map[ColumnRef:map[fields:[map[A_Star:map[]]] location:7]]]]] whereClause:map[A_Expr:map[kind:AEXPR_OP lexpr:map[ColumnRef:map[fields:[map[String:map[sval:_id]]] location:40]] location:44 name:[map[String:map[sval:=]]] rexpr:map[A_Const:map[ival:map[ival:1] location:46]]]]]]]] version:160001]
+
+
+
+
+
+
+
+
+_email [stmts 0 stmt SelectStmt sortClause 0 SortBy node ColumnRef fields 0 String sval]
+
+_id [stmts 0 stmt SelectStmt whereClause A_Expr lexpr ColumnRef fields 0 String sval]
+
+
+
+
+
+
+
+2024/02/11 02:28:17 treeMao2 map[stmts:[map[stmt:map[SelectStmt:map[fromClause:[map[RangeVar:map[inh:true location:14 relname:device2 relpersistence:p schemaname:public]]] limitCount:map[A_Const:map[ival:map[ival:1000] location:76]] limitOption:LIMIT_OPTION_COUNT op:SETOP_NONE sortClause:[map[SortBy:map[location:-1 node:map[ColumnRef:map[fields:[map[String:map[sval:email]]] location:58]] sortby_dir:SORTBY_DESC sortby_nulls:SORTBY_NULLS_DEFAULT]]] targetList:[map[ResTarget:map[location:7 val:map[ColumnRef:map[fields:[map[A_Star:map[]]] location:7]]]]] whereClause:map[A_Expr:map[kind:AEXPR_OP lexpr:map[ColumnRef:map[fields:[map[String:map[sval:id]]] location:40]] location:44 name:[map[String:map[sval:=]]] rexpr:map[A_Const:map[ival:map[ival:1] location:46]]]]]]]] version:160001]
+
+
