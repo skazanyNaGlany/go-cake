@@ -525,9 +525,3 @@ func (pd *PostgresDriver) GetSortFields(
 	sort string) ([]string, go_cake.HTTPError) {
 	return []string{}, nil
 }
-
-func (pd *PostgresDriver) GetProjectionFields(
-	model go_cake.GoKateModel,
-	projection string) (map[string]bool, go_cake.HTTPError) {
-	return map[string]bool{}, nil
-}

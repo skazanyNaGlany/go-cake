@@ -398,16 +398,8 @@ func (brp *BaseRequestProcessor) preRequestSortableChecks() HTTPError {
 }
 
 func (brp *BaseRequestProcessor) preRequestProjectableChecks() HTTPError {
-	if brp.request.Projection == "" {
+	if len(brp.request.Projection) == 0 {
 		return nil
-	}
-
-	projecionFields, httpErr := brp.resource.DatabaseDriver.GetProjectionFields(
-		brp.resource.DbModel,
-		brp.request.Projection)
-
-	if httpErr != nil {
-		return httpErr
 	}
 
 	projectableFields := brp.resource.JSONSchemaConfig.ProjectableFields
@@ -416,7 +408,7 @@ func (brp *BaseRequestProcessor) preRequestProjectableChecks() HTTPError {
 		return nil
 	}
 
-	for iJsonField := range projecionFields {
+	for iJsonField := range brp.request.Projection {
 		if !funk.ContainsString(projectableFields, iJsonField) {
 			return NewFieldNotProjectableHTTPError(iJsonField, nil)
 		}
@@ -607,8 +599,6 @@ func (brp *BaseRequestProcessor) postRequestResponseErasedAction(jsonObjectMap m
 }
 
 func (brp *BaseRequestProcessor) postRequestResponseActions(response *ResponseJSON) HTTPError {
-	var httpErr HTTPError
-
 	hiddenFields := brp.resource.JSONSchemaConfig.HiddenFields
 	erasedFields := brp.resource.JSONSchemaConfig.ErasedFields
 
@@ -624,18 +614,18 @@ func (brp *BaseRequestProcessor) postRequestResponseActions(response *ResponseJS
 	}
 
 	// projection fields was validated at preRequestProjectableChecks()
-	projecionFields, httpErr := brp.resource.DatabaseDriver.GetProjectionFields(
-		brp.resource.DbModel,
-		brp.request.Projection)
-
-	if httpErr != nil {
-		return httpErr
-	}
-
 	for _, jsonObject := range response.Items {
-		brp.postRequestResponseHiddenAction(jsonObject, projecionFields, hiddenFields)
-		brp.postRequestResponseProjectableAction(jsonObject, projecionFields)
-		brp.postRequestResponseErasedAction(jsonObject, erasedFields)
+		brp.postRequestResponseHiddenAction(
+			jsonObject,
+			brp.request.Projection,
+			hiddenFields)
+
+		brp.postRequestResponseProjectableAction(
+			jsonObject, brp.request.Projection)
+
+		brp.postRequestResponseErasedAction(
+			jsonObject,
+			erasedFields)
 	}
 
 	return nil

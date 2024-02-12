@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
@@ -614,38 +613,6 @@ func (d *MongoDriver) GetSortFields(model go_cake.GoKateModel, sort string) ([]s
 	}
 
 	return utils.MapUtilsInstance.GetMapStringKeys(jsonMap, true), nil
-}
-
-func (d *MongoDriver) GetProjectionFields(model go_cake.GoKateModel, projection string) (map[string]bool, go_cake.HTTPError) {
-	var bsonProjection map[string]any
-
-	fields := make(map[string]bool)
-
-	if projection == "" {
-		return fields, nil
-	}
-
-	if err := json.Unmarshal([]byte(projection), &bsonProjection); err != nil {
-		httpErr := go_cake.NewMalformedProjectionHTTPError(err)
-
-		return nil, httpErr
-	}
-
-	for field, fieldData := range bsonProjection {
-		fieldDataStr := fmt.Sprintf("%v", fieldData)
-
-		fieldDataBool, err := strconv.ParseBool(fieldDataStr)
-
-		if err != nil {
-			httpErr := go_cake.NewMalformedProjectionHTTPError(err)
-
-			return nil, httpErr
-		}
-
-		fields[field] = fieldDataBool
-	}
-
-	return fields, nil
 }
 
 func (d *MongoDriver) getFindOptions(

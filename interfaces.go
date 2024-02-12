@@ -33,7 +33,6 @@ type DatabaseDriver interface {
 
 	GetWhereFields(model GoKateModel, where string) ([]string, HTTPError)
 	GetSortFields(model GoKateModel, sort string) ([]string, HTTPError)
-	GetProjectionFields(model GoKateModel, projection string) (map[string]bool, HTTPError)
 }
 
 type GoKateModel interface {

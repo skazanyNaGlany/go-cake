@@ -2,6 +2,7 @@ package go_cake
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"reflect"
@@ -23,7 +24,7 @@ type Request struct {
 	Resource         string
 	Where            string
 	Sort             string
-	Projection       string
+	Projection       map[string]bool
 	Page             int64
 	PerPage          int64
 	UniqueID         string
@@ -121,7 +122,9 @@ func (rhr *Request) Parse(r *http.Request) HTTPError {
 	}
 
 	if projection != "" {
-		rhr.Projection = projection
+		if httpErr = rhr.parseProjection(projection); httpErr != nil {
+			return httpErr
+		}
 	}
 
 	if page != "" {
@@ -245,4 +248,30 @@ func (rhr *Request) requestBodyToArrayOfMaps() ([]map[string]any, HTTPError) {
 	}
 
 	return decodedSlice, nil
+}
+
+func (rhr *Request) parseProjection(projection string) HTTPError {
+	var err error
+
+	jsonProjection, err := utils.StructUtilsInstance.JSONStringToMap(projection)
+
+	if err != nil {
+		return NewMalformedProjectionHTTPError(err)
+	}
+
+	rhr.Projection = make(map[string]bool)
+
+	for field, fieldData := range jsonProjection {
+		fieldDataStr := fmt.Sprintf("%v", fieldData)
+
+		fieldDataBool, err := strconv.ParseBool(fieldDataStr)
+
+		if err != nil {
+			return NewMalformedProjectionHTTPError(err)
+		}
+
+		rhr.Projection[field] = fieldDataBool
+	}
+
+	return nil
 }
