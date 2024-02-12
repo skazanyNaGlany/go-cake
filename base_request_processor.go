@@ -346,7 +346,9 @@ func (brp *BaseRequestProcessor) preRequestFilterableChecks() HTTPError {
 		return nil
 	}
 
-	whereFields, httpErr := brp.resource.DatabaseDriver.GetWhereFields(brp.request.Where)
+	whereFields, httpErr := brp.resource.DatabaseDriver.GetWhereFields(
+		brp.resource.DbModel,
+		brp.request.Where)
 
 	if httpErr != nil {
 		return httpErr
@@ -372,7 +374,9 @@ func (brp *BaseRequestProcessor) preRequestSortableChecks() HTTPError {
 		return nil
 	}
 
-	sortFields, httpErr := brp.resource.DatabaseDriver.GetSortFields(brp.request.Sort)
+	sortFields, httpErr := brp.resource.DatabaseDriver.GetSortFields(
+		brp.resource.DbModel,
+		brp.request.Sort)
 
 	if httpErr != nil {
 		return httpErr
@@ -398,7 +402,9 @@ func (brp *BaseRequestProcessor) preRequestProjectableChecks() HTTPError {
 		return nil
 	}
 
-	projecionFields, httpErr := brp.resource.DatabaseDriver.GetProjectionFields(brp.request.Projection)
+	projecionFields, httpErr := brp.resource.DatabaseDriver.GetProjectionFields(
+		brp.resource.DbModel,
+		brp.request.Projection)
 
 	if httpErr != nil {
 		return httpErr
@@ -618,7 +624,9 @@ func (brp *BaseRequestProcessor) postRequestResponseActions(response *ResponseJS
 	}
 
 	// projection fields was validated at preRequestProjectableChecks()
-	projecionFields, httpErr := brp.resource.DatabaseDriver.GetProjectionFields(brp.request.Projection)
+	projecionFields, httpErr := brp.resource.DatabaseDriver.GetProjectionFields(
+		brp.resource.DbModel,
+		brp.request.Projection)
 
 	if httpErr != nil {
 		return httpErr

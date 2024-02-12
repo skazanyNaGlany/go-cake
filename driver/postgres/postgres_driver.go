@@ -514,14 +514,20 @@ func (pd *PostgresDriver) Update(
 	return nil
 }
 
-func (pd *PostgresDriver) GetWhereFields(where string) ([]string, go_cake.HTTPError) {
+func (pd *PostgresDriver) GetWhereFields(
+	model go_cake.GoKateModel,
+	where string) ([]string, go_cake.HTTPError) {
 	return []string{}, nil
 }
 
-func (pd *PostgresDriver) GetSortFields(sort string) ([]string, go_cake.HTTPError) {
+func (pd *PostgresDriver) GetSortFields(
+	model go_cake.GoKateModel,
+	sort string) ([]string, go_cake.HTTPError) {
 	return []string{}, nil
 }
 
-func (pd *PostgresDriver) GetProjectionFields(projection string) (map[string]bool, go_cake.HTTPError) {
+func (pd *PostgresDriver) GetProjectionFields(
+	model go_cake.GoKateModel,
+	projection string) (map[string]bool, go_cake.HTTPError) {
 	return map[string]bool{}, nil
 }
