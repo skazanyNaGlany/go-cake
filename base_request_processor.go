@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"reflect"
+	"slices"
 	"strings"
 	"time"
 
@@ -341,6 +342,20 @@ func (brp *BaseRequestProcessor) callPostRequestHandlers(response *ResponseJSON)
 		response)
 }
 
+func (brp *BaseRequestProcessor) findNonExistingFields(
+	fields []string,
+	s []string) []string {
+	nonExistingFields := make([]string, 0)
+
+	for _, iField := range fields {
+		if !slices.Contains(s, iField) {
+			nonExistingFields = append(nonExistingFields, iField)
+		}
+	}
+
+	return nonExistingFields
+}
+
 func (brp *BaseRequestProcessor) preRequestFilterableChecks() HTTPError {
 	if brp.request.Where == "" {
 		return nil
@@ -354,6 +369,14 @@ func (brp *BaseRequestProcessor) preRequestFilterableChecks() HTTPError {
 		return httpErr
 	}
 
+	nonExistingFields := brp.findNonExistingFields(
+		whereFields,
+		brp.resource.DbModelJSONFields)
+
+	if len(nonExistingFields) > 0 {
+		return NewClientObjectFieldNotExistsHTTPError(nonExistingFields[0], nil)
+	}
+
 	filterableFields := brp.resource.JSONSchemaConfig.FilterableFields
 
 	if funk.ContainsString(filterableFields, FIELD_ANY) {
@@ -362,7 +385,7 @@ func (brp *BaseRequestProcessor) preRequestFilterableChecks() HTTPError {
 
 	for _, iJsonField := range whereFields {
 		if !funk.ContainsString(filterableFields, iJsonField) {
-			return NewFieldNotFilterableHTTPError(iJsonField, nil)
+			return NewClientObjectFieldNotFilterableHTTPError(iJsonField, nil)
 		}
 	}
 
@@ -382,6 +405,14 @@ func (brp *BaseRequestProcessor) preRequestSortableChecks() HTTPError {
 		return httpErr
 	}
 
+	nonExistingFields := brp.findNonExistingFields(
+		sortFields,
+		brp.resource.DbModelJSONFields)
+
+	if len(nonExistingFields) > 0 {
+		return NewClientObjectFieldNotExistsHTTPError(nonExistingFields[0], nil)
+	}
+
 	sortableFields := brp.resource.JSONSchemaConfig.SortableFields
 
 	if funk.ContainsString(sortableFields, FIELD_ANY) {
@@ -390,7 +421,7 @@ func (brp *BaseRequestProcessor) preRequestSortableChecks() HTTPError {
 
 	for _, iJsonField := range sortFields {
 		if !funk.ContainsString(sortableFields, iJsonField) {
-			return NewFieldNotSortableHTTPError(iJsonField, nil)
+			return NewClientObjectFieldNotSortableHTTPError(iJsonField, nil)
 		}
 	}
 
@@ -402,6 +433,14 @@ func (brp *BaseRequestProcessor) preRequestProjectableChecks() HTTPError {
 		return nil
 	}
 
+	nonExistingFields := brp.findNonExistingFields(
+		brp.request.ProjectionFields,
+		brp.resource.DbModelJSONFields)
+
+	if len(nonExistingFields) > 0 {
+		return NewClientObjectFieldNotExistsHTTPError(nonExistingFields[0], nil)
+	}
+
 	projectableFields := brp.resource.JSONSchemaConfig.ProjectableFields
 
 	if funk.ContainsString(projectableFields, FIELD_ANY) {
@@ -410,7 +449,7 @@ func (brp *BaseRequestProcessor) preRequestProjectableChecks() HTTPError {
 
 	for iJsonField := range brp.request.Projection {
 		if !funk.ContainsString(projectableFields, iJsonField) {
-			return NewFieldNotProjectableHTTPError(iJsonField, nil)
+			return NewClientObjectFieldNotProjectableHTTPError(iJsonField, nil)
 		}
 	}
 

@@ -31,9 +31,10 @@ type URLTooBigHTTPError struct{ BaseHTTPError }
 type PayloadTooBigHTTPError struct{ BaseHTTPError }
 type PerPageTooLargeHTTPError struct{ BaseHTTPError }
 type OKHTTPError struct{ BaseHTTPError }
-type FieldNotFilterableHTTPError struct{ BaseHTTPError }
-type FieldNotSortableHTTPError struct{ BaseHTTPError }
-type FieldNotProjectableHTTPError struct{ BaseHTTPError }
+type ClientObjectFieldNotExistsHTTPError struct{ BaseHTTPError }
+type ClientObjectFieldNotFilterableHTTPError struct{ BaseHTTPError }
+type ClientObjectFieldNotSortableHTTPError struct{ BaseHTTPError }
+type ClientObjectFieldNotProjectableHTTPError struct{ BaseHTTPError }
 type ClientObjectFieldRequiredHTTPError struct{ BaseHTTPError }
 type ClientObjectFieldNotInsertableHTTPError struct{ BaseHTTPError }
 type ClientObjectFieldNotUpdatableHTTPError struct{ BaseHTTPError }
@@ -196,8 +197,19 @@ func NewOKHTTPError(internalError error) HTTPError {
 	return e
 }
 
-func NewFieldNotFilterableHTTPError(field string, internalError error) HTTPError {
-	e := FieldNotFilterableHTTPError{}
+func NewClientObjectFieldNotExistsHTTPError(field string, internalError error) HTTPError {
+	e := ClientObjectFieldNotExistsHTTPError{}
+
+	message := fmt.Sprintf("Field '%v' does not exists", field)
+
+	e.StatusCode = http.StatusBadRequest
+	e.StatusMessage = e.FormatStatusMessage(message, e, internalError)
+
+	return e
+}
+
+func NewClientObjectFieldNotFilterableHTTPError(field string, internalError error) HTTPError {
+	e := ClientObjectFieldNotFilterableHTTPError{}
 
 	message := fmt.Sprintf("Field '%v' is not filterable", field)
 
@@ -207,8 +219,8 @@ func NewFieldNotFilterableHTTPError(field string, internalError error) HTTPError
 	return e
 }
 
-func NewFieldNotSortableHTTPError(field string, internalError error) HTTPError {
-	e := FieldNotSortableHTTPError{}
+func NewClientObjectFieldNotSortableHTTPError(field string, internalError error) HTTPError {
+	e := ClientObjectFieldNotSortableHTTPError{}
 
 	message := fmt.Sprintf("Field '%v' is not sortable", field)
 
@@ -218,8 +230,8 @@ func NewFieldNotSortableHTTPError(field string, internalError error) HTTPError {
 	return e
 }
 
-func NewFieldNotProjectableHTTPError(field string, internalError error) HTTPError {
-	e := FieldNotProjectableHTTPError{}
+func NewClientObjectFieldNotProjectableHTTPError(field string, internalError error) HTTPError {
+	e := ClientObjectFieldNotProjectableHTTPError{}
 
 	message := fmt.Sprintf("Field '%v' is not projectable", field)
 

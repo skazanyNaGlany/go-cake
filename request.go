@@ -25,6 +25,7 @@ type Request struct {
 	Where            string
 	Sort             string
 	Projection       map[string]bool
+	ProjectionFields []string
 	Page             int64
 	PerPage          int64
 	UniqueID         string
@@ -260,6 +261,7 @@ func (rhr *Request) parseProjection(projection string) HTTPError {
 	}
 
 	rhr.Projection = make(map[string]bool)
+	rhr.ProjectionFields = make([]string, 0)
 
 	for field, fieldData := range jsonProjection {
 		fieldDataStr := fmt.Sprintf("%v", fieldData)
@@ -271,6 +273,7 @@ func (rhr *Request) parseProjection(projection string) HTTPError {
 		}
 
 		rhr.Projection[field] = fieldDataBool
+		rhr.ProjectionFields = append(rhr.ProjectionFields, field)
 	}
 
 	return nil
