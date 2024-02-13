@@ -320,6 +320,83 @@ func (pd *PostgresDriver) selectQueryJSONFieldsToBun(
 	return translatedQuery, nil
 }
 
+func (pd *PostgresDriver) selectQueryGetJSONFields(
+	query *bun.SelectQuery,
+	modelSpecs *ModelSpecs,
+	getWhereFields bool,
+	getOrderByFields bool) ([]string, []string, go_cake.HTTPError) {
+	statements, err := parser.Parse(query.String())
+
+	if err != nil {
+		return nil, nil, go_cake.NewMalformedWhereHTTPError(err)
+	}
+
+	whereFields := make([]string, 0)
+	orderByFields := make([]string, 0)
+
+	treeWhereNodes := make([]any, 0)
+	treeOrderNodes := make([]any, 0)
+
+	walker := &walk.AstWalker{
+		Fn: func(ctx any, node any) (stop bool) {
+			_, isTreeWhere := node.(*tree.Where)
+			_, isTreeOrder := node.(*tree.Order)
+			unresolvedName, isUnresolvedName := node.(*tree.UnresolvedName)
+
+			if isTreeWhere {
+				treeWhereNodes = make([]any, 0)
+				treeWhereNodes = append(treeWhereNodes, node)
+			}
+
+			if isTreeOrder {
+				treeOrderNodes = make([]any, 0)
+				treeOrderNodes = append(treeOrderNodes, node)
+			}
+
+			if isUnresolvedName && unresolvedName.NumParts > 0 {
+				if len(treeWhereNodes) > 0 && getWhereFields {
+					whereFields = append(whereFields, unresolvedName.Parts[0])
+				} else if len(treeOrderNodes) > 0 && getOrderByFields {
+					orderByFields = append(orderByFields, unresolvedName.Parts[0])
+				}
+			}
+
+			return false
+		},
+	}
+
+	_, err = walker.Walk(statements, nil)
+
+	if err != nil {
+		return nil, nil, go_cake.NewMalformedWhereHTTPError(err)
+	}
+
+	return whereFields, orderByFields, nil
+}
+
+func (pd *PostgresDriver) buildSelectQuery(
+	modelSpec *ModelSpecs,
+	where string,
+	sort string,
+	page *int64,
+	perPage *int64) *bun.SelectQuery {
+	query := pd.db.NewSelect().Table(modelSpec.dbPath)
+
+	if where != "" {
+		query = query.Where(where)
+	}
+
+	if sort != "" {
+		query = query.OrderExpr(sort)
+	}
+
+	if page != nil && perPage != nil {
+		query = query.Offset(int(*perPage) * int(*page)).Limit(int(*perPage))
+	}
+
+	return query
+}
+
 func (pd *PostgresDriver) Find(
 	model go_cake.GoKateModel,
 	where, sort string,
@@ -332,17 +409,7 @@ func (pd *PostgresDriver) Find(
 
 	resultDocuments := pd.prepareResultDocuments(model, int(perPage))
 
-	query := pd.db.NewSelect().Table(modelSpec.dbPath)
-
-	if where != "" {
-		query = query.Where(where)
-	}
-
-	if sort != "" {
-		query = query.OrderExpr(sort)
-	}
-
-	query = query.Offset(int(perPage) * int(page)).Limit(int(perPage))
+	query := pd.buildSelectQuery(&modelSpec, where, sort, &page, &perPage)
 
 	translatedQuery, httpErr := pd.selectQueryJSONFieldsToBun(query, &modelSpec)
 
@@ -368,11 +435,7 @@ func (pd *PostgresDriver) Total(
 	modelType := fmt.Sprintf("%T", model)
 	modelSpec := pd.modelJSONTagMap[modelType]
 
-	query := pd.db.NewSelect().Table(modelSpec.dbPath)
-
-	if where != "" {
-		query = query.Where(where)
-	}
+	query := pd.buildSelectQuery(&modelSpec, where, "", nil, nil)
 
 	translatedQuery, httpErr := pd.selectQueryJSONFieldsToBun(query, &modelSpec)
 
@@ -517,11 +580,33 @@ func (pd *PostgresDriver) Update(
 func (pd *PostgresDriver) GetWhereFields(
 	model go_cake.GoKateModel,
 	where string) ([]string, go_cake.HTTPError) {
-	return []string{}, nil
+	modelType := fmt.Sprintf("%T", model)
+	modelSpec := pd.modelJSONTagMap[modelType]
+
+	query := pd.buildSelectQuery(&modelSpec, where, "", nil, nil)
+
+	whereFields, _, httpErr := pd.selectQueryGetJSONFields(query, &modelSpec, true, false)
+
+	if httpErr != nil {
+		return nil, httpErr
+	}
+
+	return whereFields, nil
 }
 
 func (pd *PostgresDriver) GetSortFields(
 	model go_cake.GoKateModel,
 	sort string) ([]string, go_cake.HTTPError) {
-	return []string{}, nil
+	modelType := fmt.Sprintf("%T", model)
+	modelSpec := pd.modelJSONTagMap[modelType]
+
+	query := pd.buildSelectQuery(&modelSpec, "", sort, nil, nil)
+
+	_, orderByFields, httpErr := pd.selectQueryGetJSONFields(query, &modelSpec, false, true)
+
+	if httpErr != nil {
+		return nil, httpErr
+	}
+
+	return orderByFields, nil
 }
