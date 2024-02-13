@@ -17,6 +17,7 @@ import (
 	"github.com/uptrace/bun/driver/pgdriver"
 )
 
+// TODO add support for etags
 type PostgresDriver struct {
 	modelJSONTagMap map[string]ModelSpecs
 	db              *bun.DB
