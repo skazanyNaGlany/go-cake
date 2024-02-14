@@ -11,4 +11,5 @@ type ResourceCallback struct {
 	InsertedDocuments   DocumentsAppFunc
 	DeletingDocuments   DocumentsAppFunc
 	DeletedDocuments    DocumentsAppFunc
+	CreateContext       CreateContextAppFunc
 }

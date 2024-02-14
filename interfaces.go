@@ -1,5 +1,7 @@
 package go_cake
 
+import "context"
+
 type DatabaseDriver interface {
 	TestModel(
 		idField string,
@@ -10,26 +12,33 @@ type DatabaseDriver interface {
 	Find(
 		model GoKateModel,
 		where, sort string,
-		page, perPage int64) ([]GoKateModel, HTTPError)
+		page, perPage int64,
+		ctx context.Context,
+		userData any) ([]GoKateModel, HTTPError)
 
 	Delete(
 		model GoKateModel,
 		documents []GoKateModel,
-	) HTTPError
+		ctx context.Context,
+		userData any) HTTPError
 
 	Total(
 		model GoKateModel,
-		where string) (uint64, HTTPError)
+		where string,
+		ctx context.Context,
+		userData any) (uint64, HTTPError)
 
 	Insert(
 		model GoKateModel,
 		documents []GoKateModel,
-	) HTTPError
+		ctx context.Context,
+		userData any) HTTPError
 
 	Update(
 		model GoKateModel,
 		documents []GoKateModel,
-	) HTTPError
+		ctx context.Context,
+		userData any) HTTPError
 
 	GetWhereFields(model GoKateModel, where string) ([]string, HTTPError)
 	GetSortFields(model GoKateModel, sort string) ([]string, HTTPError)

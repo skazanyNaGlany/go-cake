@@ -318,7 +318,9 @@ func (d *MongoDriver) jsonWhereToFilter(jsonStr string, modelSpecs *ModelSpecs) 
 func (d *MongoDriver) Find(
 	model go_cake.GoKateModel,
 	where, sort string,
-	page, perPage int64) ([]go_cake.GoKateModel, go_cake.HTTPError) {
+	page, perPage int64,
+	ctx context.Context,
+	userData any) ([]go_cake.GoKateModel, go_cake.HTTPError) {
 	var filter bson.M
 	var err error
 
@@ -342,9 +344,6 @@ func (d *MongoDriver) Find(
 	}
 
 	collection := d.client.Database(d.DatabaseName).Collection(modelSpec.dbPath)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
 
 	cursor, err := collection.Find(ctx, filter, &options)
 
@@ -377,7 +376,9 @@ func (d *MongoDriver) Find(
 
 func (d *MongoDriver) Total(
 	model go_cake.GoKateModel,
-	where string) (uint64, go_cake.HTTPError) {
+	where string,
+	ctx context.Context,
+	userData any) (uint64, go_cake.HTTPError) {
 	var filter bson.M
 	var err error
 	var count int64
@@ -395,9 +396,6 @@ func (d *MongoDriver) Total(
 
 	collection := d.client.Database(d.DatabaseName).Collection(modelSpec.dbPath)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
 	count, err = collection.CountDocuments(ctx, filter)
 
 	if err != nil {
@@ -412,7 +410,8 @@ func (d *MongoDriver) Total(
 func (d *MongoDriver) Insert(
 	model go_cake.GoKateModel,
 	documents []go_cake.GoKateModel,
-) go_cake.HTTPError {
+	ctx context.Context,
+	userData any) go_cake.HTTPError {
 	if len(documents) == 0 {
 		return nil
 	}
@@ -421,9 +420,6 @@ func (d *MongoDriver) Insert(
 	modelSpec := d.modelJSONTagMap[modelType]
 
 	collection := d.client.Database(d.DatabaseName).Collection(modelSpec.dbPath)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
 
 	for _, item := range documents {
 		if item.GetHTTPError() != nil {
@@ -453,7 +449,8 @@ func (d *MongoDriver) Insert(
 func (d *MongoDriver) Delete(
 	model go_cake.GoKateModel,
 	documents []go_cake.GoKateModel,
-) go_cake.HTTPError {
+	ctx context.Context,
+	userData any) go_cake.HTTPError {
 	if len(documents) == 0 {
 		return nil
 	}
@@ -462,9 +459,6 @@ func (d *MongoDriver) Delete(
 	modelSpec := d.modelJSONTagMap[modelType]
 
 	collection := d.client.Database(d.DatabaseName).Collection(modelSpec.dbPath)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
 
 	for _, item := range documents {
 		if item.GetHTTPError() != nil {
@@ -502,7 +496,8 @@ func (d *MongoDriver) Delete(
 func (d *MongoDriver) Update(
 	model go_cake.GoKateModel,
 	documents []go_cake.GoKateModel,
-) go_cake.HTTPError {
+	ctx context.Context,
+	userData any) go_cake.HTTPError {
 	if len(documents) == 0 {
 		return nil
 	}
@@ -511,9 +506,6 @@ func (d *MongoDriver) Update(
 	modelSpec := d.modelJSONTagMap[modelType]
 
 	collection := d.client.Database(d.DatabaseName).Collection(modelSpec.dbPath)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
 
 	for _, item := range documents {
 		if item.GetHTTPError() != nil {

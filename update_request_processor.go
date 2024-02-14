@@ -56,9 +56,18 @@ func (urp *UpdateRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoK
 		return converted, httpErr
 	}
 
+	ctx, cancel := urp.resource.ResourceCallback.CreateContext(
+		urp.resource,
+		urp.request,
+		response,
+		ctxDbDriverUpdate)
+	defer cancel()
+
 	httpErr = urp.resource.DatabaseDriver.Update(
 		urp.resource.DbModel,
-		converted)
+		converted,
+		ctx,
+		nil)
 
 	httpErr = urp.callUpdatedDocumentsHandlers(converted, httpErr)
 

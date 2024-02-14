@@ -127,9 +127,18 @@ func (brp *BaseRequestProcessor) catchInternalError(response *ResponseJSON, r an
 }
 
 func (brp *BaseRequestProcessor) processTotals(response *ResponseJSON) {
+	ctx, cancel := brp.resource.ResourceCallback.CreateContext(
+		brp.resource,
+		brp.request,
+		response,
+		ctxDbDriverTotal)
+	defer cancel()
+
 	response.Meta.Total, _ = brp.resource.DatabaseDriver.Total(
 		brp.resource.DbModel,
-		brp.request.Where)
+		brp.request.Where,
+		ctx,
+		nil)
 }
 
 func (brp *BaseRequestProcessor) checkSupportedVersion() HTTPError {

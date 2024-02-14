@@ -54,9 +54,18 @@ func (irp *InsertRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoK
 		return converted, httpErr
 	}
 
+	ctx, cancel := irp.resource.ResourceCallback.CreateContext(
+		irp.resource,
+		irp.request,
+		response,
+		ctxDbDriverInsert)
+	defer cancel()
+
 	httpErr = irp.resource.DatabaseDriver.Insert(
 		irp.resource.DbModel,
-		converted)
+		converted,
+		ctx,
+		nil)
 
 	httpErr = irp.callInsertedDocumentsHandlers(converted, httpErr)
 

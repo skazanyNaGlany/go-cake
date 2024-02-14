@@ -36,12 +36,21 @@ func (grp *GetRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoKate
 		return nil, nil
 	}
 
+	ctx, cancel := grp.resource.ResourceCallback.CreateContext(
+		grp.resource,
+		grp.request,
+		response,
+		ctxDbDriverFind)
+	defer cancel()
+
 	documents, httpErr = grp.resource.DatabaseDriver.Find(
 		grp.resource.DbModel,
 		grp.request.Where,
 		grp.request.Sort,
 		grp.request.Page,
-		grp.request.PerPage)
+		grp.request.PerPage,
+		ctx,
+		nil)
 
 	httpErr = grp.callFetchedDocumentsHandlers(documents, httpErr)
 

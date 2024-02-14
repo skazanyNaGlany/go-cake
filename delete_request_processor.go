@@ -49,9 +49,18 @@ func (drp *DeleteRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoK
 		return converted, httpErr
 	}
 
+	ctx, cancel := drp.resource.ResourceCallback.CreateContext(
+		drp.resource,
+		drp.request,
+		response,
+		ctxDbDriverDelete)
+	defer cancel()
+
 	httpErr = drp.resource.DatabaseDriver.Delete(
 		drp.resource.DbModel,
-		converted)
+		converted,
+		ctx,
+		nil)
 
 	httpErr = drp.callDeletedDocumentsHandlers(converted, httpErr)
 

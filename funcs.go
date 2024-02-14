@@ -1,6 +1,9 @@
 package go_cake
 
-import "net/http"
+import (
+	"context"
+	"net/http"
+)
 
 // app handlers
 type AuthAppFunc func(
@@ -18,6 +21,12 @@ type DocumentsAppFunc func(
 	request *Request,
 	documents []GoKateModel,
 	currentHttpErr HTTPError) HTTPError
+
+type CreateContextAppFunc func(
+	resource *Resource,
+	request *Request,
+	response *ResponseJSON,
+	contextType ContextType) (context.Context, context.CancelFunc)
 
 // internal handlers
 type MiddlewareFunc func(http.Handler) http.Handler

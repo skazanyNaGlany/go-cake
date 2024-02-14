@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/auxten/postgresql-parser/pkg/sql/parser"
 	"github.com/auxten/postgresql-parser/pkg/sql/sem/tree"
@@ -401,9 +400,9 @@ func (pd *PostgresDriver) buildSelectQuery(
 func (pd *PostgresDriver) Find(
 	model go_cake.GoKateModel,
 	where, sort string,
-	page, perPage int64) ([]go_cake.GoKateModel, go_cake.HTTPError) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+	page, perPage int64,
+	ctx context.Context,
+	userData any) ([]go_cake.GoKateModel, go_cake.HTTPError) {
 
 	modelType := fmt.Sprintf("%T", model)
 	modelSpec := pd.modelJSONTagMap[modelType]
@@ -429,9 +428,9 @@ func (pd *PostgresDriver) Find(
 
 func (pd *PostgresDriver) Total(
 	model go_cake.GoKateModel,
-	where string) (uint64, go_cake.HTTPError) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+	where string,
+	ctx context.Context,
+	userData any) (uint64, go_cake.HTTPError) {
 
 	modelType := fmt.Sprintf("%T", model)
 	modelSpec := pd.modelJSONTagMap[modelType]
@@ -456,13 +455,11 @@ func (pd *PostgresDriver) Total(
 func (pd *PostgresDriver) Insert(
 	model go_cake.GoKateModel,
 	documents []go_cake.GoKateModel,
-) go_cake.HTTPError {
+	ctx context.Context,
+	userData any) go_cake.HTTPError {
 	if len(documents) == 0 {
 		return nil
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
 
 	for _, item := range documents {
 		if item.GetHTTPError() != nil {
@@ -503,13 +500,11 @@ func (pd *PostgresDriver) Insert(
 func (pd *PostgresDriver) Delete(
 	model go_cake.GoKateModel,
 	documents []go_cake.GoKateModel,
-) go_cake.HTTPError {
+	ctx context.Context,
+	userData any) go_cake.HTTPError {
 	if len(documents) == 0 {
 		return nil
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
 
 	for _, item := range documents {
 		if item.GetHTTPError() != nil {
@@ -542,13 +537,11 @@ func (pd *PostgresDriver) Delete(
 func (pd *PostgresDriver) Update(
 	model go_cake.GoKateModel,
 	documents []go_cake.GoKateModel,
-) go_cake.HTTPError {
+	ctx context.Context,
+	userData any) go_cake.HTTPError {
 	if len(documents) == 0 {
 		return nil
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
 
 	for _, item := range documents {
 		if item.GetHTTPError() != nil {
