@@ -193,6 +193,8 @@ func main() {
 		panic(err)
 	}
 
+	defer devicesResource.Close()
+
 	devicesResource.ResourceCallback.PreRequestCallback = preRequest
 	devicesResource.ResourceCallback.PostRequestCallback = postRequest
 	devicesResource.ResourceCallback.FetchedDocuments = fetchedDocuments

@@ -1,8 +1,10 @@
 package go_cake
 
 import (
+	"context"
 	"fmt"
 	"regexp"
+	"time"
 
 	"github.com/skazanyNaGlany/go-cake/utils"
 	"github.com/thoas/go-funk"
@@ -26,6 +28,14 @@ type Resource struct {
 	DeleteAllowed                 bool
 	InsertAllowed                 bool
 	UpdateAllowed                 bool
+	GetContext                    context.Context
+	DeleteContext                 context.Context
+	InsertContext                 context.Context
+	UpdateContext                 context.Context
+	GetContextCancel              context.CancelFunc
+	DeleteContextCancel           context.CancelFunc
+	InsertContextCancel           context.CancelFunc
+	UpdateContextCancel           context.CancelFunc
 	GetMaxOutputItems             int64
 	DeleteMaxInputItems           int64
 	DeleteMaxInputPayloadSize     int64
@@ -67,6 +77,15 @@ func NewResource(
 	resource.InsertMaxInputItems = MAX_INPUT_ITEMS
 	resource.DeleteMaxInputItems = MAX_INPUT_ITEMS
 	resource.UpdateMaxInputItems = MAX_INPUT_ITEMS
+
+	resource.GetContext, resource.GetContextCancel = context.WithTimeout(
+		context.Background(), 30*time.Second)
+	resource.DeleteContext, resource.DeleteContextCancel = context.WithTimeout(
+		context.Background(), 30*time.Second)
+	resource.InsertContext, resource.InsertContextCancel = context.WithTimeout(
+		context.Background(), 30*time.Second)
+	resource.UpdateContext, resource.UpdateContextCancel = context.WithTimeout(
+		context.Background(), 30*time.Second)
 
 	resource.ResourceCallback = &ResourceCallback{
 		AuthCallback: authCallback,
@@ -129,6 +148,26 @@ func NewResource(
 	}
 
 	return &resource, nil
+}
+
+func (rhr *Resource) Close() error {
+	if rhr.GetContextCancel != nil {
+		rhr.GetContextCancel()
+	}
+
+	if rhr.DeleteContextCancel != nil {
+		rhr.DeleteContextCancel()
+	}
+
+	if rhr.InsertContextCancel != nil {
+		rhr.InsertContextCancel()
+	}
+
+	if rhr.UpdateContextCancel != nil {
+		rhr.UpdateContextCancel()
+	}
+
+	return nil
 }
 
 func (rhr *Resource) testResource() error {

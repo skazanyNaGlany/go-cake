@@ -233,6 +233,8 @@ func main() {
 		panic(err)
 	}
 
+	defer ordersResource.Close()
+
 	ordersResource.JSONSchemaConfig.Validator = ordersValidator
 	ordersResource.ResourceCallback.PreRequestCallback = preRequest
 	ordersResource.ResourceCallback.PostRequestCallback = postRequest
@@ -288,6 +290,8 @@ func main() {
 		panic(err)
 	}
 
+	defer usersResource.Close()
+
 	usersResource.JSONSchemaConfig.Validator = usersValidator
 	usersResource.ResourceCallback.PreRequestCallback = preRequest
 	usersResource.ResourceCallback.PostRequestCallback = postRequest
@@ -339,6 +343,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	defer productsResource.Close()
 
 	productsResource.JSONSchemaConfig.Validator = productsValidator
 	productsResource.ResourceCallback.PreRequestCallback = preRequest
@@ -392,16 +398,18 @@ func main() {
 		panic(err)
 	}
 
-	productsResource.JSONSchemaConfig.Validator = devicesValidator
-	productsResource.ResourceCallback.PreRequestCallback = preRequest
-	productsResource.ResourceCallback.PostRequestCallback = postRequest
-	productsResource.ResourceCallback.FetchedDocuments = fetchedDocuments
-	productsResource.ResourceCallback.UpdatingDocuments = updatingDocuments
-	productsResource.ResourceCallback.UpdatedDocuments = updatedDocuments
-	productsResource.ResourceCallback.InsertingDocuments = insertingDocuments
-	productsResource.ResourceCallback.InsertedDocuments = insertedDocuments
-	productsResource.ResourceCallback.DeletingDocuments = deletingDocuments
-	productsResource.ResourceCallback.DeletedDocuments = deletedDocuments
+	defer devicesResource.Close()
+
+	devicesResource.JSONSchemaConfig.Validator = devicesValidator
+	devicesResource.ResourceCallback.PreRequestCallback = preRequest
+	devicesResource.ResourceCallback.PostRequestCallback = postRequest
+	devicesResource.ResourceCallback.FetchedDocuments = fetchedDocuments
+	devicesResource.ResourceCallback.UpdatingDocuments = updatingDocuments
+	devicesResource.ResourceCallback.UpdatedDocuments = updatedDocuments
+	devicesResource.ResourceCallback.InsertingDocuments = insertingDocuments
+	devicesResource.ResourceCallback.InsertedDocuments = insertedDocuments
+	devicesResource.ResourceCallback.DeletingDocuments = deletingDocuments
+	devicesResource.ResourceCallback.DeletedDocuments = deletedDocuments
 
 	if err := restHandler.AddResource(devicesResource); err != nil {
 		panic(err)
