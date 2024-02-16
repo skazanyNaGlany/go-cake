@@ -50,7 +50,7 @@ func (pd *PostgresDriver) Close() error {
 func (pd *PostgresDriver) TestModel(
 	idField string,
 	etagField string,
-	model go_cake.GoKateModel,
+	model go_cake.GoCakeModel,
 	dbPath string) error {
 	modelType := fmt.Sprintf("%T", model)
 
@@ -108,20 +108,20 @@ func (pd *PostgresDriver) TestModel(
 }
 
 func (pd *PostgresDriver) testModelID(
-	model go_cake.GoKateModel,
-	newModelInstance go_cake.GoKateModel) error {
+	model go_cake.GoCakeModel,
+	newModelInstance go_cake.GoCakeModel) error {
 	return nil
 }
 
 func (pd *PostgresDriver) testModelETag(
-	model go_cake.GoKateModel,
-	newModelInstance go_cake.GoKateModel) error {
+	model go_cake.GoCakeModel,
+	newModelInstance go_cake.GoCakeModel) error {
 	return nil
 }
 
 func (pd *PostgresDriver) testModelError(
-	model go_cake.GoKateModel,
-	newModelInstance go_cake.GoKateModel) error {
+	model go_cake.GoCakeModel,
+	newModelInstance go_cake.GoCakeModel) error {
 	okHttpErr := go_cake.NewOKHTTPError(nil)
 
 	newModelInstance.SetHTTPError(okHttpErr)
@@ -136,7 +136,7 @@ func (pd *PostgresDriver) testModelError(
 func (pd *PostgresDriver) testTagMap(
 	idField string,
 	etagField string,
-	model go_cake.GoKateModel,
+	model go_cake.GoCakeModel,
 	tagMap utils.TagMap) error {
 
 	_, jsonTagExists := tagMap[idField]
@@ -172,8 +172,8 @@ func (pd *PostgresDriver) testTagMap(
 	return nil
 }
 
-func (pd *PostgresDriver) prepareResultDocuments(model go_cake.GoKateModel, howMany int) []go_cake.GoKateModel {
-	resultDocuments := make([]go_cake.GoKateModel, 0)
+func (pd *PostgresDriver) prepareResultDocuments(model go_cake.GoCakeModel, howMany int) []go_cake.GoCakeModel {
+	resultDocuments := make([]go_cake.GoCakeModel, 0)
 
 	for howMany > 0 {
 		howMany--
@@ -398,11 +398,11 @@ func (pd *PostgresDriver) buildSelectQuery(
 }
 
 func (pd *PostgresDriver) Find(
-	model go_cake.GoKateModel,
+	model go_cake.GoCakeModel,
 	where, sort string,
 	page, perPage int64,
 	ctx context.Context,
-	userData any) ([]go_cake.GoKateModel, go_cake.HTTPError) {
+	userData any) ([]go_cake.GoCakeModel, go_cake.HTTPError) {
 
 	modelType := fmt.Sprintf("%T", model)
 	modelSpec := pd.modelJSONTagMap[modelType]
@@ -427,7 +427,7 @@ func (pd *PostgresDriver) Find(
 }
 
 func (pd *PostgresDriver) Total(
-	model go_cake.GoKateModel,
+	model go_cake.GoCakeModel,
 	where string,
 	ctx context.Context,
 	userData any) (uint64, go_cake.HTTPError) {
@@ -453,8 +453,8 @@ func (pd *PostgresDriver) Total(
 }
 
 func (pd *PostgresDriver) Insert(
-	model go_cake.GoKateModel,
-	documents []go_cake.GoKateModel,
+	model go_cake.GoCakeModel,
+	documents []go_cake.GoCakeModel,
 	ctx context.Context,
 	userData any) go_cake.HTTPError {
 	if len(documents) == 0 {
@@ -498,8 +498,8 @@ func (pd *PostgresDriver) Insert(
 }
 
 func (pd *PostgresDriver) Delete(
-	model go_cake.GoKateModel,
-	documents []go_cake.GoKateModel,
+	model go_cake.GoCakeModel,
+	documents []go_cake.GoCakeModel,
 	ctx context.Context,
 	userData any) go_cake.HTTPError {
 	if len(documents) == 0 {
@@ -535,8 +535,8 @@ func (pd *PostgresDriver) Delete(
 }
 
 func (pd *PostgresDriver) Update(
-	model go_cake.GoKateModel,
-	documents []go_cake.GoKateModel,
+	model go_cake.GoCakeModel,
+	documents []go_cake.GoCakeModel,
 	ctx context.Context,
 	userData any) go_cake.HTTPError {
 	if len(documents) == 0 {
@@ -572,7 +572,7 @@ func (pd *PostgresDriver) Update(
 }
 
 func (pd *PostgresDriver) GetWhereFields(
-	model go_cake.GoKateModel,
+	model go_cake.GoCakeModel,
 	where string) ([]string, go_cake.HTTPError) {
 	modelType := fmt.Sprintf("%T", model)
 	modelSpec := pd.modelJSONTagMap[modelType]
@@ -589,7 +589,7 @@ func (pd *PostgresDriver) GetWhereFields(
 }
 
 func (pd *PostgresDriver) GetSortFields(
-	model go_cake.GoKateModel,
+	model go_cake.GoCakeModel,
 	sort string) ([]string, go_cake.HTTPError) {
 	modelType := fmt.Sprintf("%T", model)
 	modelSpec := pd.modelJSONTagMap[modelType]

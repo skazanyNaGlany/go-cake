@@ -17,21 +17,9 @@ CREATE TABLE device2 (
 );
 */
 
-// // // GORM
-// type Device2 struct {
-// 	bun.BaseModel           `json:"-" bun:"table:device2"`
-// 	go_cake.BaseGoKateModel `json:"-" gorm:"-"`
-
-// 	ID          *int64  `json:"_id,omitempty" gorm:"column:id"`
-// 	ETag        *string `json:"_etag,omitempty"  gorm:"column:etag"`
-// 	Email       *string `json:"_email,omitempty"  gorm:"column:email"`
-// 	MaxContacts *int64  `json:"_max_contacts,omitempty"  gorm:"column:max_contacts"`
-// }
-
-// BUN
 type Device2 struct {
 	bun.BaseModel           `json:"-" bun:"table:device2"`
-	go_cake.BaseGoKateModel `json:"-" bun:"-"`
+	go_cake.BaseGoCakeModel `json:"-" bun:"-"`
 
 	ID          *int64  `json:"_id,omitempty" bun:"id,pk,autoincrement"`
 	ETag        *string `json:"_etag,omitempty" bun:"etag"`
@@ -39,7 +27,7 @@ type Device2 struct {
 	MaxContacts *int64  `json:"_max_contacts,omitempty" bun:"max_contacts"`
 }
 
-func (d *Device2) CreateInstance() go_cake.GoKateModel {
+func (d *Device2) CreateInstance() go_cake.GoCakeModel {
 	newObj := Device2{}
 
 	return &newObj

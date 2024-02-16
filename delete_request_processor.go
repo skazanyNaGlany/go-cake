@@ -16,7 +16,7 @@ func NewDeleteRequestProcessor(request *Request, resource *Resource) *DeleteRequ
 
 // TODO require _id and _etag in the payload
 // when they are set in the resource
-func (drp *DeleteRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoKateModel, HTTPError) {
+func (drp *DeleteRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoCakeModel, HTTPError) {
 	var httpErr HTTPError
 
 	if !drp.resource.DeleteAllowed {

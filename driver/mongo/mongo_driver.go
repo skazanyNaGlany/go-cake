@@ -64,7 +64,7 @@ func (d *MongoDriver) Close() error {
 func (d *MongoDriver) TestModel(
 	idField string,
 	etagField string,
-	model go_cake.GoKateModel,
+	model go_cake.GoCakeModel,
 	dbPath string) error {
 	modelType := fmt.Sprintf("%T", model)
 
@@ -120,8 +120,8 @@ func (d *MongoDriver) TestModel(
 }
 
 func (d *MongoDriver) testModelID(
-	model go_cake.GoKateModel,
-	newModelInstance go_cake.GoKateModel) error {
+	model go_cake.GoCakeModel,
+	newModelInstance go_cake.GoCakeModel) error {
 	err := newModelInstance.SetID(ENCODABLE_OBJECT_ID)
 
 	if err != nil {
@@ -158,8 +158,8 @@ func (d *MongoDriver) testModelID(
 }
 
 func (d *MongoDriver) testModelETag(
-	model go_cake.GoKateModel,
-	newModelInstance go_cake.GoKateModel) error {
+	model go_cake.GoCakeModel,
+	newModelInstance go_cake.GoCakeModel) error {
 	encodedEtag := newModelInstance.CreateETag()
 
 	if encodedEtag == nil {
@@ -190,8 +190,8 @@ func (d *MongoDriver) testModelETag(
 }
 
 func (d *MongoDriver) testModelError(
-	model go_cake.GoKateModel,
-	newModelInstance go_cake.GoKateModel) error {
+	model go_cake.GoCakeModel,
+	newModelInstance go_cake.GoCakeModel) error {
 	okHttpErr := go_cake.NewOKHTTPError(nil)
 
 	newModelInstance.SetHTTPError(okHttpErr)
@@ -206,7 +206,7 @@ func (d *MongoDriver) testModelError(
 func (d *MongoDriver) testTagMap(
 	idField string,
 	etagField string,
-	model go_cake.GoKateModel,
+	model go_cake.GoCakeModel,
 	tagMap utils.TagMap) error {
 
 	idJsonData, jsonTagExists := tagMap[idField]
@@ -316,15 +316,15 @@ func (d *MongoDriver) jsonWhereToFilter(jsonStr string, modelSpecs *ModelSpecs) 
 }
 
 func (d *MongoDriver) Find(
-	model go_cake.GoKateModel,
+	model go_cake.GoCakeModel,
 	where, sort string,
 	page, perPage int64,
 	ctx context.Context,
-	userData any) ([]go_cake.GoKateModel, go_cake.HTTPError) {
+	userData any) ([]go_cake.GoCakeModel, go_cake.HTTPError) {
 	var filter bson.M
 	var err error
 
-	resultDocuments := make([]go_cake.GoKateModel, 0)
+	resultDocuments := make([]go_cake.GoCakeModel, 0)
 
 	modelType := fmt.Sprintf("%T", model)
 	modelSpec := d.modelJSONTagMap[modelType]
@@ -375,7 +375,7 @@ func (d *MongoDriver) Find(
 }
 
 func (d *MongoDriver) Total(
-	model go_cake.GoKateModel,
+	model go_cake.GoCakeModel,
 	where string,
 	ctx context.Context,
 	userData any) (uint64, go_cake.HTTPError) {
@@ -408,8 +408,8 @@ func (d *MongoDriver) Total(
 }
 
 func (d *MongoDriver) Insert(
-	model go_cake.GoKateModel,
-	documents []go_cake.GoKateModel,
+	model go_cake.GoCakeModel,
+	documents []go_cake.GoCakeModel,
 	ctx context.Context,
 	userData any) go_cake.HTTPError {
 	if len(documents) == 0 {
@@ -447,8 +447,8 @@ func (d *MongoDriver) Insert(
 }
 
 func (d *MongoDriver) Delete(
-	model go_cake.GoKateModel,
-	documents []go_cake.GoKateModel,
+	model go_cake.GoCakeModel,
+	documents []go_cake.GoCakeModel,
 	ctx context.Context,
 	userData any) go_cake.HTTPError {
 	if len(documents) == 0 {
@@ -494,8 +494,8 @@ func (d *MongoDriver) Delete(
 }
 
 func (d *MongoDriver) Update(
-	model go_cake.GoKateModel,
-	documents []go_cake.GoKateModel,
+	model go_cake.GoCakeModel,
+	documents []go_cake.GoCakeModel,
 	ctx context.Context,
 	userData any) go_cake.HTTPError {
 	if len(documents) == 0 {
@@ -545,7 +545,7 @@ func (d *MongoDriver) Update(
 
 func (d *MongoDriver) documentToFilter2(
 	modelSpec *ModelSpecs,
-	document go_cake.GoKateModel) (map[string]any, go_cake.HTTPError) {
+	document go_cake.GoCakeModel) (map[string]any, go_cake.HTTPError) {
 	ifilter := make(map[string]any)
 	idValue := document.GetID()
 
@@ -577,7 +577,7 @@ func (d *MongoDriver) documentToFilter2(
 	return ifilter, nil
 }
 
-func (d *MongoDriver) GetWhereFields(model go_cake.GoKateModel, where string) ([]string, go_cake.HTTPError) {
+func (d *MongoDriver) GetWhereFields(model go_cake.GoCakeModel, where string) ([]string, go_cake.HTTPError) {
 	var bsonWhere map[string]any
 
 	if err := json.Unmarshal([]byte(where), &bsonWhere); err != nil {
@@ -595,7 +595,7 @@ func (d *MongoDriver) GetWhereFields(model go_cake.GoKateModel, where string) ([
 	return reducedFields, nil
 }
 
-func (d *MongoDriver) GetSortFields(model go_cake.GoKateModel, sort string) ([]string, go_cake.HTTPError) {
+func (d *MongoDriver) GetSortFields(model go_cake.GoCakeModel, sort string) ([]string, go_cake.HTTPError) {
 	jsonMap, err := utils.StructUtilsInstance.JSONStringToMap(sort)
 
 	if err != nil {

@@ -161,7 +161,7 @@ func NewNoResourceJSONSchemaConfigIDFieldSetError(resource *Resource, internalEr
 
 func NewIDFieldModelNotFoundError(
 	resource *Resource,
-	model GoKateModel,
+	model GoCakeModel,
 	jsonIDField string,
 	internalError error) error {
 	e := IDFieldModelNotFoundError{}
@@ -182,7 +182,7 @@ func NewIDFieldModelNotFoundError(
 
 func NewETagFieldModelNotFoundError(
 	resource *Resource,
-	model GoKateModel,
+	model GoCakeModel,
 	jsonETagField string,
 	internalError error) error {
 	e := ETagFieldModelNotFoundError{}
@@ -204,7 +204,7 @@ func NewETagFieldModelNotFoundError(
 func NewUnableToTestModelError(
 	resource *Resource,
 	driver DatabaseDriver,
-	model GoKateModel,
+	model GoCakeModel,
 	internalError error) error {
 	e := UnableToTestModelError{}
 

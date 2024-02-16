@@ -13,7 +13,7 @@ import (
 type Resource struct {
 	Pattern, DbPath, ResourceName string
 	DatabaseDriver                DatabaseDriver
-	DbModel                       GoKateModel
+	DbModel                       GoCakeModel
 	DbModelIDField                string // TODO test if field exists in the model
 	DbModelETagField              string // TODO test if field exists in the model
 	SupportedVersion              []string
@@ -43,7 +43,7 @@ func NewResource(
 	dbPath string,
 	resourceName string,
 	driver DatabaseDriver,
-	dbModel GoKateModel,
+	dbModel GoCakeModel,
 	dbModelIDField string,
 	jsonIDField string,
 	dbModelETagField string,

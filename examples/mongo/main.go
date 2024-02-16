@@ -37,7 +37,7 @@ func postRequest(
 	return nil
 }
 
-func printDocuments(action string, documents []go_cake.GoKateModel) {
+func printDocuments(action string, documents []go_cake.GoCakeModel) {
 	for _, doc := range documents {
 		log.Println(action, doc)
 	}
@@ -46,7 +46,7 @@ func printDocuments(action string, documents []go_cake.GoKateModel) {
 func fetchedDocuments(
 	resource *go_cake.Resource,
 	request *go_cake.Request,
-	documents []go_cake.GoKateModel,
+	documents []go_cake.GoCakeModel,
 	currentHttpErr go_cake.HTTPError) go_cake.HTTPError {
 	if currentHttpErr != nil {
 		return currentHttpErr
@@ -60,7 +60,7 @@ func fetchedDocuments(
 func updatingDocuments(
 	resource *go_cake.Resource,
 	request *go_cake.Request,
-	documents []go_cake.GoKateModel,
+	documents []go_cake.GoCakeModel,
 	currentHttpErr go_cake.HTTPError) go_cake.HTTPError {
 	if currentHttpErr != nil {
 		return currentHttpErr
@@ -76,7 +76,7 @@ func updatingDocuments(
 func updatedDocuments(
 	resource *go_cake.Resource,
 	request *go_cake.Request,
-	documents []go_cake.GoKateModel,
+	documents []go_cake.GoCakeModel,
 	currentHttpErr go_cake.HTTPError) go_cake.HTTPError {
 	if currentHttpErr != nil {
 		return currentHttpErr
@@ -90,7 +90,7 @@ func updatedDocuments(
 func insertingDocuments(
 	resource *go_cake.Resource,
 	request *go_cake.Request,
-	documents []go_cake.GoKateModel,
+	documents []go_cake.GoCakeModel,
 	currentHttpErr go_cake.HTTPError) go_cake.HTTPError {
 	if currentHttpErr != nil {
 		return currentHttpErr
@@ -104,7 +104,7 @@ func insertingDocuments(
 func insertedDocuments(
 	resource *go_cake.Resource,
 	request *go_cake.Request,
-	documents []go_cake.GoKateModel,
+	documents []go_cake.GoCakeModel,
 	currentHttpErr go_cake.HTTPError) go_cake.HTTPError {
 	if currentHttpErr != nil {
 		return currentHttpErr
@@ -118,7 +118,7 @@ func insertedDocuments(
 func deletingDocuments(
 	resource *go_cake.Resource,
 	request *go_cake.Request,
-	documents []go_cake.GoKateModel,
+	documents []go_cake.GoCakeModel,
 	currentHttpErr go_cake.HTTPError) go_cake.HTTPError {
 	if currentHttpErr != nil {
 		return currentHttpErr
@@ -132,7 +132,7 @@ func deletingDocuments(
 func deletedDocuments(
 	resource *go_cake.Resource,
 	request *go_cake.Request,
-	documents []go_cake.GoKateModel,
+	documents []go_cake.GoCakeModel,
 	currentHttpErr go_cake.HTTPError) go_cake.HTTPError {
 	if currentHttpErr != nil {
 		return currentHttpErr

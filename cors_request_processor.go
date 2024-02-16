@@ -14,6 +14,6 @@ func NewCORSRequestProcessor(request *Request, resource *Resource) *CORSRequestP
 	return &corsRequestProcessor
 }
 
-func (crp *CORSRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoKateModel, HTTPError) {
+func (crp *CORSRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoCakeModel, HTTPError) {
 	return nil, nil
 }

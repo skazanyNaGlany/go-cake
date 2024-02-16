@@ -10,7 +10,7 @@ import (
 )
 
 type Product struct {
-	go_cake.BaseGoKateModel `json:"-" bson:"-"`
+	go_cake.BaseGoCakeModel `json:"-" bson:"-"`
 
 	ID           primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
 	ETag         int32              `json:"_etag,omitempty" bson:"_etag,omitempty"`
@@ -19,7 +19,7 @@ type Product struct {
 	SomeBoolean2 bool               `json:"some_boolean2,omitempty" bson:"some_boolean2,omitempty"`
 }
 
-func (p *Product) CreateInstance() go_cake.GoKateModel {
+func (p *Product) CreateInstance() go_cake.GoCakeModel {
 	newObj := Product{}
 
 	return &newObj

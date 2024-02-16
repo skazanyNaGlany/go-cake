@@ -22,7 +22,7 @@ type BaseRequestProcessor struct {
 
 func (brp *BaseRequestProcessor) ProcessRequest(response *ResponseJSON) {
 	var httpErr HTTPError = NewOKHTTPError(nil)
-	var documents []GoKateModel
+	var documents []GoCakeModel
 
 	timeStart := time.Now()
 
@@ -224,7 +224,7 @@ func (brp *BaseRequestProcessor) callAuthHandlers(response *ResponseJSON) HTTPEr
 }
 
 func (brp *BaseRequestProcessor) callFetchedDocumentsHandlers(
-	documents []GoKateModel,
+	documents []GoCakeModel,
 	currentHttpErr HTTPError) HTTPError {
 	if brp.resource.ResourceCallback == nil ||
 		brp.resource.ResourceCallback.FetchedDocuments == nil {
@@ -239,7 +239,7 @@ func (brp *BaseRequestProcessor) callFetchedDocumentsHandlers(
 }
 
 func (brp *BaseRequestProcessor) callUpdatingDocumentsHandlers(
-	documents []GoKateModel,
+	documents []GoCakeModel,
 	currentHttpErr HTTPError) HTTPError {
 	if brp.resource.ResourceCallback == nil ||
 		brp.resource.ResourceCallback.UpdatingDocuments == nil {
@@ -254,7 +254,7 @@ func (brp *BaseRequestProcessor) callUpdatingDocumentsHandlers(
 }
 
 func (brp *BaseRequestProcessor) callUpdatedDocumentsHandlers(
-	documents []GoKateModel,
+	documents []GoCakeModel,
 	currentHttpErr HTTPError) HTTPError {
 	if brp.resource.ResourceCallback == nil ||
 		brp.resource.ResourceCallback.UpdatedDocuments == nil {
@@ -269,7 +269,7 @@ func (brp *BaseRequestProcessor) callUpdatedDocumentsHandlers(
 }
 
 func (brp *BaseRequestProcessor) callInsertingDocumentsHandlers(
-	documents []GoKateModel, currentHttpErr HTTPError) HTTPError {
+	documents []GoCakeModel, currentHttpErr HTTPError) HTTPError {
 	if brp.resource.ResourceCallback == nil ||
 		brp.resource.ResourceCallback.InsertingDocuments == nil {
 		return nil
@@ -283,7 +283,7 @@ func (brp *BaseRequestProcessor) callInsertingDocumentsHandlers(
 }
 
 func (brp *BaseRequestProcessor) callInsertedDocumentsHandlers(
-	documents []GoKateModel,
+	documents []GoCakeModel,
 	currentHttpErr HTTPError) HTTPError {
 	if brp.resource.ResourceCallback == nil ||
 		brp.resource.ResourceCallback.InsertedDocuments == nil {
@@ -298,7 +298,7 @@ func (brp *BaseRequestProcessor) callInsertedDocumentsHandlers(
 }
 
 func (brp *BaseRequestProcessor) callDeletingDocumentsHandlers(
-	documents []GoKateModel,
+	documents []GoCakeModel,
 	currentHttpErr HTTPError) HTTPError {
 	if brp.resource.ResourceCallback == nil ||
 		brp.resource.ResourceCallback.DeletingDocuments == nil {
@@ -313,7 +313,7 @@ func (brp *BaseRequestProcessor) callDeletingDocumentsHandlers(
 }
 
 func (brp *BaseRequestProcessor) callDeletedDocumentsHandlers(
-	documents []GoKateModel,
+	documents []GoCakeModel,
 	currentHttpErr HTTPError) HTTPError {
 	if brp.resource.ResourceCallback == nil ||
 		brp.resource.ResourceCallback.DeletedDocuments == nil {
@@ -565,7 +565,7 @@ func (brp *BaseRequestProcessor) preRequestUpdatableChecks(
 	return nil
 }
 
-func (brp *BaseRequestProcessor) documentsToJsonMapObjects(documents []GoKateModel, response *ResponseJSON) HTTPError {
+func (brp *BaseRequestProcessor) documentsToJsonMapObjects(documents []GoCakeModel, response *ResponseJSON) HTTPError {
 	var jsonObjectMap map[string]any
 
 	for _, iDoc := range documents {
@@ -590,7 +590,7 @@ func (brp *BaseRequestProcessor) documentsToJsonMapObjects(documents []GoKateMod
 	return nil
 }
 
-func (brp *BaseRequestProcessor) checkDocumentsForErrors(documents []GoKateModel) HTTPError {
+func (brp *BaseRequestProcessor) checkDocumentsForErrors(documents []GoCakeModel) HTTPError {
 	for _, iDocument := range documents {
 		if iDocument.GetHTTPError() != nil {
 			return NewPayloadInvalidHTTPError(nil)
@@ -729,8 +729,8 @@ func (brp *BaseRequestProcessor) getSupportedMethodsForOrigin(origin string) []s
 	return supported
 }
 
-func (brp *BaseRequestProcessor) decodedJsonSliceToDBModels(decodedJsonSlice []map[string]any) ([]GoKateModel, HTTPError) {
-	converted := make([]GoKateModel, 0)
+func (brp *BaseRequestProcessor) decodedJsonSliceToDBModels(decodedJsonSlice []map[string]any) ([]GoCakeModel, HTTPError) {
+	converted := make([]GoCakeModel, 0)
 
 	for _, jsonObject := range brp.request.DecodedJsonSlice {
 		modelNewInstance := brp.resource.DbModel.CreateInstance()

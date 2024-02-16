@@ -20,7 +20,7 @@ func NewUpdateRequestProcessor(request *Request, resource *Resource) *UpdateRequ
 
 // TODO require _id and _etag in the payload
 // when they are set in the resource
-func (urp *UpdateRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoKateModel, HTTPError) {
+func (urp *UpdateRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoCakeModel, HTTPError) {
 	var httpErr HTTPError
 
 	if !urp.resource.UpdateAllowed {

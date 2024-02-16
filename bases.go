@@ -1,37 +1,37 @@
 package go_cake
 
-type BaseGoKateModel struct {
+type BaseGoCakeModel struct {
 	gk_GetHTTPError HTTPError
 }
 
-func (bgkm *BaseGoKateModel) GetHTTPError() HTTPError {
+func (bgkm *BaseGoCakeModel) GetHTTPError() HTTPError {
 	return bgkm.gk_GetHTTPError
 }
 
-func (bgkm *BaseGoKateModel) SetHTTPError(httpError HTTPError) {
+func (bgkm *BaseGoCakeModel) SetHTTPError(httpError HTTPError) {
 	bgkm.gk_GetHTTPError = httpError
 }
 
-func (bgkm *BaseGoKateModel) CreateInstance() GoKateModel {
+func (bgkm *BaseGoCakeModel) CreateInstance() GoCakeModel {
 	panic("not implemented")
 }
 
-func (bgkm *BaseGoKateModel) GetID() any {
+func (bgkm *BaseGoCakeModel) GetID() any {
 	panic("not implemented")
 }
 
-func (bgkm *BaseGoKateModel) SetID(id string) error {
+func (bgkm *BaseGoCakeModel) SetID(id string) error {
 	panic("not implemented")
 }
 
-func (bgkm *BaseGoKateModel) CreateETag() any {
+func (bgkm *BaseGoCakeModel) CreateETag() any {
 	panic("not implemented")
 }
 
-func (bgkm *BaseGoKateModel) GetETag() any {
+func (bgkm *BaseGoCakeModel) GetETag() any {
 	panic("not implemented")
 }
 
-func (bgkm *BaseGoKateModel) SetETag(etag string) error {
+func (bgkm *BaseGoCakeModel) SetETag(etag string) error {
 	panic("not implemented")
 }

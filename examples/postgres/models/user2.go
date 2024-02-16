@@ -20,7 +20,7 @@ CREATE TABLE user2 (
 
 type User2 struct {
 	bun.BaseModel           `json:"-" bun:"table:user2"`
-	go_cake.BaseGoKateModel `json:"-" bun:"-"`
+	go_cake.BaseGoCakeModel `json:"-" bun:"-"`
 
 	ID          *int64  `json:"id,omitempty" bun:"id,pk,autoincrement"`
 	ETag        *int32  `json:"etag,omitempty" bun:"etag"`
@@ -28,7 +28,7 @@ type User2 struct {
 	MaxContacts *int64  `json:"max_contacts,omitempty" bun:"max_contacts"`
 }
 
-func (u *User2) CreateInstance() go_cake.GoKateModel {
+func (u *User2) CreateInstance() go_cake.GoCakeModel {
 	newObj := User2{}
 
 	return &newObj

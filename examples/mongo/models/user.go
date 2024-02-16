@@ -10,7 +10,7 @@ import (
 )
 
 type User struct {
-	go_cake.BaseGoKateModel `json:"-" bson:"-"`
+	go_cake.BaseGoCakeModel `json:"-" bson:"-"`
 
 	ID          *primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
 	ETag        *int32              `json:"_etag,omitempty" bson:"_etag,omitempty"`
@@ -18,7 +18,7 @@ type User struct {
 	MaxContacts *uint64             `json:"max_contacts,omitempty" bson:"max_contacts,omitempty"`
 }
 
-func (u *User) CreateInstance() go_cake.GoKateModel {
+func (u *User) CreateInstance() go_cake.GoCakeModel {
 	newObj := User{}
 
 	return &newObj

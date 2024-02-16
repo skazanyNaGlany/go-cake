@@ -19,7 +19,7 @@ type PrePostRequestAppFunc func(
 type DocumentsAppFunc func(
 	resource *Resource,
 	request *Request,
-	documents []GoKateModel,
+	documents []GoCakeModel,
 	currentHttpErr HTTPError) HTTPError
 
 type CreateContextAppFunc func(

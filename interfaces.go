@@ -6,46 +6,46 @@ type DatabaseDriver interface {
 	TestModel(
 		idField string,
 		etagField string,
-		model GoKateModel,
+		model GoCakeModel,
 		dbPath string) error
 
 	Find(
-		model GoKateModel,
+		model GoCakeModel,
 		where, sort string,
 		page, perPage int64,
 		ctx context.Context,
-		userData any) ([]GoKateModel, HTTPError)
+		userData any) ([]GoCakeModel, HTTPError)
 
 	Delete(
-		model GoKateModel,
-		documents []GoKateModel,
+		model GoCakeModel,
+		documents []GoCakeModel,
 		ctx context.Context,
 		userData any) HTTPError
 
 	Total(
-		model GoKateModel,
+		model GoCakeModel,
 		where string,
 		ctx context.Context,
 		userData any) (uint64, HTTPError)
 
 	Insert(
-		model GoKateModel,
-		documents []GoKateModel,
+		model GoCakeModel,
+		documents []GoCakeModel,
 		ctx context.Context,
 		userData any) HTTPError
 
 	Update(
-		model GoKateModel,
-		documents []GoKateModel,
+		model GoCakeModel,
+		documents []GoCakeModel,
 		ctx context.Context,
 		userData any) HTTPError
 
-	GetWhereFields(model GoKateModel, where string) ([]string, HTTPError)
-	GetSortFields(model GoKateModel, sort string) ([]string, HTTPError)
+	GetWhereFields(model GoCakeModel, where string) ([]string, HTTPError)
+	GetSortFields(model GoCakeModel, sort string) ([]string, HTTPError)
 }
 
-type GoKateModel interface {
-	CreateInstance() GoKateModel
+type GoCakeModel interface {
+	CreateInstance() GoCakeModel
 	CreateETag() any
 	SetID(id string) error
 	GetID() any
@@ -60,5 +60,5 @@ type JSONValidator interface {
 }
 
 type RequestProcessor interface {
-	ProcessRequest(response *ResponseJSON) ([]GoKateModel, HTTPError)
+	ProcessRequest(response *ResponseJSON) ([]GoCakeModel, HTTPError)
 }

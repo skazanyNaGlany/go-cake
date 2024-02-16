@@ -7,7 +7,7 @@ import (
 )
 
 type Order struct {
-	go_cake.BaseGoKateModel `json:"-" bson:"-"`
+	go_cake.BaseGoCakeModel `json:"-" bson:"-"`
 
 	ID              *primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
 	ETag            *string             `json:"_etag,omitempty" bson:"_etag,omitempty"`
@@ -24,7 +24,7 @@ type Order struct {
 	RequiredField2  *string             `json:"required_field2,omitempty" bson:"required_field2,omitempty"`
 }
 
-func (o *Order) CreateInstance() go_cake.GoKateModel {
+func (o *Order) CreateInstance() go_cake.GoCakeModel {
 	newObj := Order{}
 
 	return &newObj

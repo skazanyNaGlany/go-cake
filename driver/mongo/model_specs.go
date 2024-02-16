@@ -6,7 +6,7 @@ import (
 )
 
 type ModelSpecs struct {
-	model     go_cake.GoKateModel
+	model     go_cake.GoCakeModel
 	tagMap    utils.TagMap
 	idField   string
 	etagField string

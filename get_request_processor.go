@@ -14,9 +14,9 @@ func NewGetRequestProcessor(request *Request, resource *Resource) *GetRequestPro
 	return &getRequestProcessor
 }
 
-func (grp *GetRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoKateModel, HTTPError) {
+func (grp *GetRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoCakeModel, HTTPError) {
 	var httpErr HTTPError
-	var documents []GoKateModel
+	var documents []GoCakeModel
 
 	if !grp.resource.GetAllowed {
 		return nil, NewMethodNotAllowedHTTPError(nil)

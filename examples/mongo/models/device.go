@@ -6,14 +6,14 @@ import (
 )
 
 type Device struct {
-	go_cake.BaseGoKateModel `json:"-" bson:"-"`
+	go_cake.BaseGoCakeModel `json:"-" bson:"-"`
 
 	ID          *primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
 	Email       *string             `json:"email,omitempty" bson:"email,omitempty"`
 	MaxContacts *uint64             `json:"max_contacts,omitempty" bson:"max_contacts,omitempty"`
 }
 
-func (d *Device) CreateInstance() go_cake.GoKateModel {
+func (d *Device) CreateInstance() go_cake.GoCakeModel {
 	newObj := Device{}
 
 	return &newObj

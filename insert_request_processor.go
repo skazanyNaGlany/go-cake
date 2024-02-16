@@ -18,7 +18,7 @@ func NewInsertRequestProcessor(request *Request, resource *Resource) *InsertRequ
 	return &insertRequestProcessor
 }
 
-func (irp *InsertRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoKateModel, HTTPError) {
+func (irp *InsertRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoCakeModel, HTTPError) {
 	var httpErr HTTPError
 
 	if !irp.resource.InsertAllowed {
