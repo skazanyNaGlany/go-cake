@@ -1,5 +1,7 @@
 package go_cake
 
+import "github.com/thoas/go-funk"
+
 type DeleteRequestProcessor struct {
 	BaseRequestProcessor
 }
@@ -30,6 +32,9 @@ func (drp *DeleteRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoC
 	if drp.request.HasWhere() || drp.request.HasSort() || drp.request.HasPage() {
 		return nil, NewModifiersNotAllowedHTTPError(nil)
 	}
+
+	drp.optimizeFields(drp.request.DecodedJsonSlice)
+	drp.preRequestJSONActions(drp.request.DecodedJsonSlice)
 
 	converted, err := drp.decodedJsonSliceToDBModels(drp.request.DecodedJsonSlice)
 
@@ -87,4 +92,41 @@ func (drp *DeleteRequestProcessor) checkRanges() HTTPError {
 	}
 
 	return nil
+}
+
+func (drp *DeleteRequestProcessor) optimizeFields(decodedJsonSlice []map[string]any) {
+	optimizeOnDeleteFields := drp.resource.JSONSchemaConfig.OptimizeOnDeleteFields
+	optimizeOnDeleteAnyField := funk.ContainsString(optimizeOnDeleteFields, FIELD_ANY)
+
+	for _, jsonObject := range drp.request.DecodedJsonSlice {
+		drp.preRequestOptimizeFields(
+			jsonObject,
+			optimizeOnDeleteFields,
+			optimizeOnDeleteAnyField)
+	}
+}
+
+func (drp *DeleteRequestProcessor) preRequestJSONActions(jsonDocuments []map[string]any) {
+	var httpErr HTTPError
+
+	requireOnDeleteFields := drp.resource.JSONSchemaConfig.RequiredOnDeleteFields
+	requireOnDeleteAnyField := funk.ContainsString(requireOnDeleteFields, FIELD_ANY)
+
+	if requireOnDeleteAnyField {
+		requireOnDeleteFields = drp.resource.DbModelJSONFields
+	}
+
+	for _, jsonObject := range jsonDocuments {
+		if httpErr = drp.preRequestRequireOnUpdateChecks(
+			jsonObject,
+			requireOnDeleteFields); httpErr != nil {
+			jsonObject["__http_error__"] = httpErr
+			continue
+		}
+
+		if httpErr = drp.preRequestValidateJSON(jsonObject); httpErr != nil {
+			jsonObject["__http_error__"] = httpErr
+			continue
+		}
+	}
 }

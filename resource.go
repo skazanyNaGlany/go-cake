@@ -84,13 +84,19 @@ func NewResource(
 		UpdatableFields:        []string{FIELD_ANY},
 		OptimizeOnInsertFields: []string{FIELD_ANY},
 		OptimizeOnUpdateFields: []string{FIELD_ANY},
+		OptimizeOnDeleteFields: []string{FIELD_ANY},
 		RequiredOnUpdateFields: []string{jsonIDField}, // by default require json ID field
+		RequiredOnDeleteFields: []string{jsonIDField}, // by default require json ID field
 	}
 
 	if jsonETagField != "" {
 		// by default require json ETag field
 		resource.JSONSchemaConfig.RequiredOnUpdateFields = append(
 			resource.JSONSchemaConfig.RequiredOnUpdateFields,
+			jsonETagField)
+
+		resource.JSONSchemaConfig.RequiredOnDeleteFields = append(
+			resource.JSONSchemaConfig.RequiredOnDeleteFields,
 			jsonETagField)
 	}
 

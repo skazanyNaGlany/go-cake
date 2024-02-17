@@ -18,8 +18,10 @@ type JSONSchemaConfig struct {
 	ErasedFields           []string
 	RequiredOnInsertFields []string
 	RequiredOnUpdateFields []string
+	RequiredOnDeleteFields []string
 	OptimizeOnInsertFields []string
 	OptimizeOnUpdateFields []string
+	OptimizeOnDeleteFields []string
 	Validator              JSONValidator
 }
 
@@ -38,8 +40,10 @@ func (jsc *JSONSchemaConfig) GetAllFields() []string {
 	allFields = append(allFields, jsc.ErasedFields...)
 	allFields = append(allFields, jsc.RequiredOnInsertFields...)
 	allFields = append(allFields, jsc.RequiredOnUpdateFields...)
+	allFields = append(allFields, jsc.RequiredOnDeleteFields...)
 	allFields = append(allFields, jsc.OptimizeOnInsertFields...)
 	allFields = append(allFields, jsc.OptimizeOnUpdateFields...)
+	allFields = append(allFields, jsc.OptimizeOnDeleteFields...)
 
 	allFields = funk.UniqString(allFields)
 
