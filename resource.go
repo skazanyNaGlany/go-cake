@@ -75,14 +75,28 @@ func NewResource(
 		CreateContext: resource.createContext,
 	}
 	resource.JSONSchemaConfig = &JSONSchemaConfig{
-		IDField:           jsonIDField,
-		ETagField:         jsonETagField,
-		FilterableFields:  []string{FIELD_ANY},
-		ProjectableFields: []string{FIELD_ANY},
-		SortableFields:    []string{FIELD_ANY},
-		InsertableFields:  []string{FIELD_ANY},
-		UpdatableFields:   []string{FIELD_ANY},
+		IDField:                jsonIDField,
+		ETagField:              jsonETagField,
+		FilterableFields:       []string{FIELD_ANY},
+		ProjectableFields:      []string{FIELD_ANY},
+		SortableFields:         []string{FIELD_ANY},
+		InsertableFields:       []string{FIELD_ANY},
+		UpdatableFields:        []string{FIELD_ANY},
+		OptimizeOnInsertFields: []string{FIELD_ANY},
+		OptimizeOnUpdateFields: []string{FIELD_ANY},
+		RequiredOnUpdateFields: []string{jsonIDField}, // by default require json ID field
 	}
+
+	if jsonETagField != "" {
+		// by default require json ETag field
+		resource.JSONSchemaConfig.RequiredOnUpdateFields = append(
+			resource.JSONSchemaConfig.RequiredOnUpdateFields,
+			jsonETagField)
+	}
+
+	// TODO add RequiredOnDeleteFields (like as RequiredOnUpdateFields)
+	// with id and etag by default
+
 	resource.CORSConfig, _ = NewDefaultCORSConfig()
 
 	resource.CompiledPattern, err = regexp.Compile(resource.Pattern)

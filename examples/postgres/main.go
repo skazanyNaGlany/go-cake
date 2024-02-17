@@ -184,8 +184,8 @@ func main() {
 		&models.Device2{},
 		"ID",
 		"_id",
-		"",
-		"",
+		"ETag",
+		"_etag",
 		[]string{"v1"},
 		checkAuth)
 

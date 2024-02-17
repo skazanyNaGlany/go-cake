@@ -138,18 +138,17 @@ func (pd *PostgresDriver) testTagMap(
 	etagField string,
 	model go_cake.GoCakeModel,
 	tagMap utils.TagMap) error {
-
-	_, jsonTagExists := tagMap[idField]
+	idJsonData, jsonTagExists := tagMap[idField]
 
 	if !jsonTagExists {
 		return fmt.Errorf("%T: unable to find JSON ID field tag (%v)", model, idField)
 	}
 
-	// idBsonFieldName, bsonTagExists := idJsonData["bson"]
+	idBunFieldName, bunTagExists := idJsonData["bun"]
 
-	// if !bsonTagExists || idBsonFieldName == "" {
-	// 	return fmt.Errorf("%T: unable to find BSON ID field tag (%v)", model, idField)
-	// }
+	if !bunTagExists || idBunFieldName == "" {
+		return fmt.Errorf("%T: unable to find BUN ID field tag (%v)", model, idField)
+	}
 
 	if etagField == "" {
 		return nil
@@ -163,9 +162,9 @@ func (pd *PostgresDriver) testTagMap(
 		return fmt.Errorf("%T: unable to find JSON ETag field tag (%v)", model, etagField)
 	}
 
-	etagBsonFieldName, bsonTagExists := etagJsonData["bson"]
+	etagBunFieldName, bunTagExists := etagJsonData["bun"]
 
-	if !bsonTagExists || etagBsonFieldName == "" {
+	if !bunTagExists || etagBunFieldName == "" {
 		return fmt.Errorf("%T: unable to find JSON ETag field tag (%v)", model, etagField)
 	}
 
@@ -506,17 +505,17 @@ func (pd *PostgresDriver) Delete(
 		return nil
 	}
 
+	modelType := fmt.Sprintf("%T", model)
+	modelSpec := pd.modelJSONTagMap[modelType]
+
 	for _, item := range documents {
 		if item.GetHTTPError() != nil {
 			continue
 		}
 
-		// update etag
-		item.CreateETag()
+		query := pd.buildDeleteQuery(&modelSpec, item)
 
-		// TODO update by etag
-
-		result, err := pd.db.NewDelete().Model(item).WherePK().Exec(ctx)
+		result, err := query.Exec(ctx)
 
 		if err != nil {
 			item.SetHTTPError(go_cake.NewLowLevelDriverHTTPError(err))
@@ -534,6 +533,59 @@ func (pd *PostgresDriver) Delete(
 	return nil
 }
 
+func (pd *PostgresDriver) buildDeleteQuery(
+	modelSpec *ModelSpecs,
+	item go_cake.GoCakeModel) *bun.DeleteQuery {
+	query := pd.db.NewDelete().Model(item)
+
+	where := ""
+
+	if modelSpec.idField != "" {
+		where += fmt.Sprintf("%v = ?", modelSpec.tagMap[modelSpec.idField]["bun"])
+	}
+
+	if modelSpec.etagField != "" {
+		where += fmt.Sprintf(" AND %v = ?", modelSpec.tagMap[modelSpec.etagField]["bun"])
+	}
+
+	if modelSpec.etagField != "" {
+		// use both id and etag
+		query = query.Where(where, item.GetID(), item.GetETag())
+	} else {
+		// use only id
+		query = query.Where(where, item.GetID())
+	}
+
+	return query
+}
+
+func (pd *PostgresDriver) buildUpdateQuery(
+	modelSpec *ModelSpecs,
+	oldEtagValue any,
+	item go_cake.GoCakeModel) *bun.UpdateQuery {
+	query := pd.db.NewUpdate().Model(item)
+
+	where := ""
+
+	if modelSpec.idField != "" {
+		where += fmt.Sprintf("%v = ?", modelSpec.tagMap[modelSpec.idField]["bun"])
+	}
+
+	if modelSpec.etagField != "" {
+		where += fmt.Sprintf(" AND %v = ?", modelSpec.tagMap[modelSpec.etagField]["bun"])
+	}
+
+	if modelSpec.etagField != "" {
+		// use both id and etag
+		query = query.Where(where, item.GetID(), oldEtagValue)
+	} else {
+		// use only id
+		query = query.Where(where, item.GetID())
+	}
+
+	return query
+}
+
 func (pd *PostgresDriver) Update(
 	model go_cake.GoCakeModel,
 	documents []go_cake.GoCakeModel,
@@ -543,17 +595,22 @@ func (pd *PostgresDriver) Update(
 		return nil
 	}
 
+	modelType := fmt.Sprintf("%T", model)
+	modelSpec := pd.modelJSONTagMap[modelType]
+
 	for _, item := range documents {
 		if item.GetHTTPError() != nil {
 			continue
 		}
 
+		oldEtagValue := item.GetETag()
+
 		// update etag
 		item.CreateETag()
 
-		// TODO update by etag
+		query := pd.buildUpdateQuery(&modelSpec, oldEtagValue, item)
 
-		result, err := pd.db.NewUpdate().Model(item).WherePK().Exec(ctx)
+		result, err := query.Exec(ctx)
 
 		if err != nil {
 			item.SetHTTPError(go_cake.NewLowLevelDriverHTTPError(err))
