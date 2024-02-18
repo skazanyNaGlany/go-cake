@@ -10,6 +10,7 @@ import (
 	go_cake "github.com/skazanyNaGlany/go-cake"
 	"github.com/skazanyNaGlany/go-cake/driver/postgres"
 	"github.com/skazanyNaGlany/go-cake/examples/postgres/models"
+	"github.com/skazanyNaGlany/go-cake/utils"
 )
 
 func checkAuth(
@@ -38,8 +39,11 @@ func postRequest(
 }
 
 func printDocuments(action string, documents []go_cake.GoCakeModel) {
-	for _, doc := range documents {
-		log.Println(action, doc)
+	for i, doc := range documents {
+		log.Println(
+			action,
+			i,
+			utils.StructUtilsInstance.FormatStructNoError(doc, 4))
 	}
 }
 

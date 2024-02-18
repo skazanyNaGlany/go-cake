@@ -15,7 +15,7 @@ type TagMap map[string]map[string]string
 
 var StructUtilsInstance StructUtils
 
-func (su StructUtils) FormatStruct(val any) (string, error) {
+func (su StructUtils) FormatStruct(val any, indent int) (string, error) {
 	formatted := ""
 
 	values, err := attr.Values(val)
@@ -24,17 +24,20 @@ func (su StructUtils) FormatStruct(val any) (string, error) {
 		return "", err
 	}
 
-	formatted += fmt.Sprintf("[%T]\n", val)
+	formatted += fmt.Sprintf("[%T %p]\n", val, val)
 
 	for name, value := range values {
-		formatted += fmt.Sprintf("%v: %v\n", name, value)
+		finalValue := su.GetFinalValue(value)
+		indentSpaces := strings.Repeat(" ", indent)
+
+		formatted += fmt.Sprintf("%v %v: %v\n", indentSpaces, name, finalValue)
 	}
 
 	return strings.TrimSpace(formatted), nil
 }
 
-func (su StructUtils) FormatStructNoError(val any) string {
-	formatted, _ := su.FormatStruct(val)
+func (su StructUtils) FormatStructNoError(val any, indent int) string {
+	formatted, _ := su.FormatStruct(val, indent)
 
 	return formatted
 }
