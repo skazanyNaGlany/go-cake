@@ -100,9 +100,6 @@ func NewResource(
 			jsonETagField)
 	}
 
-	// TODO add RequiredOnDeleteFields (like as RequiredOnUpdateFields)
-	// with id and etag by default
-
 	resource.CORSConfig, _ = NewDefaultCORSConfig()
 
 	resource.CompiledPattern, err = regexp.Compile(resource.Pattern)
@@ -134,10 +131,6 @@ func NewResource(
 	}
 
 	if err = resource.checkSchemaConfigFields(); err != nil {
-		return nil, err
-	}
-
-	if err = resource.initJSONValidator(); err != nil {
 		return nil, err
 	}
 
@@ -278,18 +271,6 @@ func (rhr *Resource) checkSchemaConfig() error {
 	return nil
 }
 
-func (rhr *Resource) initJSONValidator() error {
-	if rhr.JSONSchemaConfig == nil {
-		return nil
-	}
-
-	if rhr.JSONSchemaConfig.Validator == nil {
-		return nil
-	}
-
-	return nil
-}
-
 func (rhr *Resource) compileSupportedVersions() error {
 	for _, pattern := range rhr.SupportedVersion {
 		compiled, err := regexp.Compile(pattern)
@@ -307,19 +288,12 @@ func (rhr *Resource) compileSupportedVersions() error {
 func (rhr *Resource) checkSchemaConfigFields() error {
 	allFields := rhr.JSONSchemaConfig.GetAllFields()
 
-	// log.Println("allFields", allFields)
-	// log.Println("rhr.DbModelJSONFields", rhr.DbModelJSONFields)
-
 	for _, iField := range allFields {
 		if iField == FIELD_ANY {
 			continue
 		}
 
 		if !funk.ContainsString(rhr.DbModelJSONFields, iField) {
-			// log.Println("allFields", allFields)
-			// log.Println("rhr.DbModelJSONFields", rhr.DbModelJSONFields)
-			// log.Println("iField", iField)
-
 			return SchemaConfigUnknownFieldError{
 				BaseError{Message: fmt.Sprintf("Unknown field %v in %T model", iField, rhr.DbModel)}}
 		}

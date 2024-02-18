@@ -510,19 +510,6 @@ func (brp *BaseRequestProcessor) preRequestOptimizeFields(
 	}
 }
 
-func (brp *BaseRequestProcessor) preRequestValidateJSON(jsonObjectMap map[string]any) HTTPError {
-	if brp.resource.JSONSchemaConfig == nil ||
-		brp.resource.JSONSchemaConfig.Validator == nil {
-		return nil
-	}
-
-	if err := brp.resource.JSONSchemaConfig.Validator.Validate(jsonObjectMap); err != nil {
-		return NewClientObjectMalformedHTTPError(err)
-	}
-
-	return nil
-}
-
 func (brp *BaseRequestProcessor) preRequestInsertableChecks(jsonObjectMap map[string]any, requiredFields, insertableFields []string) HTTPError {
 	for iJsonField := range jsonObjectMap {
 		if funk.ContainsString(requiredFields, iJsonField) {

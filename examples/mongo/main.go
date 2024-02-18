@@ -235,7 +235,10 @@ func main() {
 
 	defer ordersResource.Close()
 
-	ordersResource.JSONSchemaConfig.Validator = ordersValidator
+	ordersResource.JSONSchemaConfig.GetValidator = ordersValidator
+	ordersResource.JSONSchemaConfig.DeleteValidator = ordersValidator
+	ordersResource.JSONSchemaConfig.InsertValidator = ordersValidator
+	ordersResource.JSONSchemaConfig.UpdateValidator = ordersValidator
 	ordersResource.ResourceCallback.PreRequestCallback = preRequest
 	ordersResource.ResourceCallback.PostRequestCallback = postRequest
 	ordersResource.ResourceCallback.FetchedDocuments = fetchedDocuments
@@ -292,7 +295,10 @@ func main() {
 
 	defer usersResource.Close()
 
-	usersResource.JSONSchemaConfig.Validator = usersValidator
+	usersResource.JSONSchemaConfig.GetValidator = usersValidator
+	usersResource.JSONSchemaConfig.DeleteValidator = usersValidator
+	usersResource.JSONSchemaConfig.InsertValidator = usersValidator
+	usersResource.JSONSchemaConfig.UpdateValidator = usersValidator
 	usersResource.ResourceCallback.PreRequestCallback = preRequest
 	usersResource.ResourceCallback.PostRequestCallback = postRequest
 	usersResource.ResourceCallback.FetchedDocuments = fetchedDocuments
@@ -346,7 +352,10 @@ func main() {
 
 	defer productsResource.Close()
 
-	productsResource.JSONSchemaConfig.Validator = productsValidator
+	productsResource.JSONSchemaConfig.GetValidator = productsValidator
+	productsResource.JSONSchemaConfig.DeleteValidator = productsValidator
+	productsResource.JSONSchemaConfig.InsertValidator = productsValidator
+	productsResource.JSONSchemaConfig.UpdateValidator = productsValidator
 	productsResource.ResourceCallback.PreRequestCallback = preRequest
 	productsResource.ResourceCallback.PostRequestCallback = postRequest
 	productsResource.ResourceCallback.FetchedDocuments = fetchedDocuments
@@ -400,7 +409,10 @@ func main() {
 
 	defer devicesResource.Close()
 
-	devicesResource.JSONSchemaConfig.Validator = devicesValidator
+	devicesResource.JSONSchemaConfig.GetValidator = devicesValidator
+	devicesResource.JSONSchemaConfig.DeleteValidator = devicesValidator
+	devicesResource.JSONSchemaConfig.InsertValidator = devicesValidator
+	devicesResource.JSONSchemaConfig.UpdateValidator = devicesValidator
 	devicesResource.ResourceCallback.PreRequestCallback = preRequest
 	devicesResource.ResourceCallback.PostRequestCallback = postRequest
 	devicesResource.ResourceCallback.FetchedDocuments = fetchedDocuments

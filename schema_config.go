@@ -22,7 +22,10 @@ type JSONSchemaConfig struct {
 	OptimizeOnInsertFields []string
 	OptimizeOnUpdateFields []string
 	OptimizeOnDeleteFields []string
-	Validator              JSONValidator
+	GetValidator           JSONValidator
+	DeleteValidator        JSONValidator
+	InsertValidator        JSONValidator
+	UpdateValidator        JSONValidator
 }
 
 func (jsc *JSONSchemaConfig) GetAllFields() []string {

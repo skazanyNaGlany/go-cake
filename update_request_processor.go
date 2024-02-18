@@ -147,3 +147,17 @@ func (urp *UpdateRequestProcessor) checkRanges() HTTPError {
 
 	return nil
 }
+
+func (urp *UpdateRequestProcessor) preRequestValidateJSON(
+	jsonObjectMap map[string]any) HTTPError {
+	if urp.resource.JSONSchemaConfig == nil ||
+		urp.resource.JSONSchemaConfig.UpdateValidator == nil {
+		return nil
+	}
+
+	if err := urp.resource.JSONSchemaConfig.UpdateValidator.Validate(jsonObjectMap); err != nil {
+		return NewClientObjectMalformedHTTPError(err)
+	}
+
+	return nil
+}

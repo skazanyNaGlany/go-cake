@@ -145,3 +145,17 @@ func (irp *InsertRequestProcessor) checkRanges() HTTPError {
 
 	return nil
 }
+
+func (irp *InsertRequestProcessor) preRequestValidateJSON(
+	jsonObjectMap map[string]any) HTTPError {
+	if irp.resource.JSONSchemaConfig == nil ||
+		irp.resource.JSONSchemaConfig.InsertValidator == nil {
+		return nil
+	}
+
+	if err := irp.resource.JSONSchemaConfig.InsertValidator.Validate(jsonObjectMap); err != nil {
+		return NewClientObjectMalformedHTTPError(err)
+	}
+
+	return nil
+}

@@ -130,3 +130,17 @@ func (drp *DeleteRequestProcessor) preRequestJSONActions(jsonDocuments []map[str
 		}
 	}
 }
+
+func (drp *DeleteRequestProcessor) preRequestValidateJSON(
+	jsonObjectMap map[string]any) HTTPError {
+	if drp.resource.JSONSchemaConfig == nil ||
+		drp.resource.JSONSchemaConfig.DeleteValidator == nil {
+		return nil
+	}
+
+	if err := drp.resource.JSONSchemaConfig.DeleteValidator.Validate(jsonObjectMap); err != nil {
+		return NewClientObjectMalformedHTTPError(err)
+	}
+
+	return nil
+}
