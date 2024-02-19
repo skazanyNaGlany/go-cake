@@ -16,7 +16,6 @@ import (
 	"github.com/uptrace/bun/driver/pgdriver"
 )
 
-// TODO add support for etags
 type PostgresDriver struct {
 	modelJSONTagMap map[string]ModelSpecs
 	db              *bun.DB
@@ -402,7 +401,6 @@ func (pd *PostgresDriver) Find(
 	page, perPage int64,
 	ctx context.Context,
 	userData any) ([]go_cake.GoCakeModel, go_cake.HTTPError) {
-
 	modelType := fmt.Sprintf("%T", model)
 	modelSpec := pd.modelJSONTagMap[modelType]
 
