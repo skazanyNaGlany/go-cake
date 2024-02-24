@@ -29,6 +29,7 @@ type Device2 struct {
 
 func (d *Device2) CreateInstance() go_cake.GoCakeModel {
 	newObj := Device2{}
+	newObj.SetSubModel(&newObj)
 
 	return &newObj
 }

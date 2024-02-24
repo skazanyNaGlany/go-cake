@@ -28,8 +28,13 @@ type User2 struct {
 	MaxContacts *int64  `json:"max_contacts,omitempty" bun:"max_contacts"`
 }
 
+func (u *User2) GetBaseGoCakeModel() *go_cake.BaseGoCakeModel {
+	return &u.BaseGoCakeModel
+}
+
 func (u *User2) CreateInstance() go_cake.GoCakeModel {
 	newObj := User2{}
+	newObj.SetSubModel(&newObj)
 
 	return &newObj
 }

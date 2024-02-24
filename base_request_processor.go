@@ -553,23 +553,8 @@ func (brp *BaseRequestProcessor) preRequestUpdatableChecks(
 }
 
 func (brp *BaseRequestProcessor) documentsToJsonMapObjects(documents []GoCakeModel, response *ResponseJSON) HTTPError {
-	var jsonObjectMap map[string]any
-
 	for _, iDoc := range documents {
-		itemBytes, _ := json.Marshal(iDoc)
-		jsonObjectMap = make(map[string]any)
-
-		_ = json.Unmarshal(itemBytes, &jsonObjectMap)
-
-		if httpErr := iDoc.GetHTTPError(); httpErr != nil {
-			// TODO add ToJSON method
-			_meta := make(map[string]any)
-
-			_meta["status_code"] = httpErr.GetStatusCode()
-			_meta["status_message"] = httpErr.GetStatusMessage()
-
-			jsonObjectMap["_meta"] = _meta
-		}
+		jsonObjectMap, _ := iDoc.ToMap()
 
 		response.Items = append(response.Items, jsonObjectMap)
 	}

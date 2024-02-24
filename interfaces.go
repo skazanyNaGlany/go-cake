@@ -46,6 +46,7 @@ type DatabaseDriver interface {
 
 type GoCakeModel interface {
 	CreateInstance() GoCakeModel
+	ToMap() (map[string]any, error)
 	CreateETag() any
 	SetID(id string) error
 	GetID() any
