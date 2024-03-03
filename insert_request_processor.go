@@ -36,7 +36,7 @@ func (irp *InsertRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoC
 	irp.optimizeFields(irp.request.DecodedJsonSlice)
 	irp.preRequestJSONActions(irp.request.DecodedJsonSlice)
 
-	converted, err := irp.decodedJsonSliceToDBModels(irp.request.DecodedJsonSlice)
+	converted, err := irp.decodedJsonSliceToDBModels()
 
 	if err != nil {
 		return converted, err

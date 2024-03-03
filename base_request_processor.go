@@ -701,7 +701,7 @@ func (brp *BaseRequestProcessor) getSupportedMethodsForOrigin(origin string) []s
 	return supported
 }
 
-func (brp *BaseRequestProcessor) decodedJsonSliceToDBModels(decodedJsonSlice []map[string]any) ([]GoCakeModel, HTTPError) {
+func (brp *BaseRequestProcessor) decodedJsonSliceToDBModels() ([]GoCakeModel, HTTPError) {
 	converted := make([]GoCakeModel, 0)
 
 	for _, jsonObject := range brp.request.DecodedJsonSlice {

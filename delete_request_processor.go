@@ -34,7 +34,7 @@ func (drp *DeleteRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoC
 	drp.optimizeFields(drp.request.DecodedJsonSlice)
 	drp.preRequestJSONActions(drp.request.DecodedJsonSlice)
 
-	converted, err := drp.decodedJsonSliceToDBModels(drp.request.DecodedJsonSlice)
+	converted, err := drp.decodedJsonSliceToDBModels()
 
 	if err != nil {
 		return converted, err

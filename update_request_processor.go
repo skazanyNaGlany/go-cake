@@ -36,7 +36,7 @@ func (urp *UpdateRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoC
 	urp.optimizeFields(urp.request.DecodedJsonSlice)
 	urp.preRequestJSONActions(urp.request.DecodedJsonSlice)
 
-	converted, err := urp.decodedJsonSliceToDBModels(urp.request.DecodedJsonSlice)
+	converted, err := urp.decodedJsonSliceToDBModels()
 
 	if err != nil {
 		return converted, err
