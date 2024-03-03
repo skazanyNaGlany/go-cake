@@ -31,13 +31,13 @@ type URLTooBigHTTPError struct{ BaseHTTPError }
 type PayloadTooBigHTTPError struct{ BaseHTTPError }
 type PerPageTooLargeHTTPError struct{ BaseHTTPError }
 type OKHTTPError struct{ BaseHTTPError }
-type ClientObjectFieldNotExistsHTTPError struct{ BaseHTTPError }
-type ClientObjectFieldNotFilterableHTTPError struct{ BaseHTTPError }
-type ClientObjectFieldNotSortableHTTPError struct{ BaseHTTPError }
-type ClientObjectFieldNotProjectableHTTPError struct{ BaseHTTPError }
-type ClientObjectFieldRequiredHTTPError struct{ BaseHTTPError }
-type ClientObjectFieldNotInsertableHTTPError struct{ BaseHTTPError }
-type ClientObjectFieldNotUpdatableHTTPError struct{ BaseHTTPError }
+type FieldNotExistsHTTPError struct{ BaseHTTPError }
+type FieldNotFilterableHTTPError struct{ BaseHTTPError }
+type FieldNotSortableHTTPError struct{ BaseHTTPError }
+type FieldNotProjectableHTTPError struct{ BaseHTTPError }
+type FieldRequiredHTTPError struct{ BaseHTTPError }
+type FieldNotInsertableHTTPError struct{ BaseHTTPError }
+type FieldNotUpdatableHTTPError struct{ BaseHTTPError }
 type InvalidAcceptRequestHeaderHTTPError struct{ BaseHTTPError }
 type InvalidContentTypeRequestHeaderHTTPError struct{ BaseHTTPError }
 type ClientObjectMalformedHTTPError struct{ BaseHTTPError }
@@ -197,8 +197,8 @@ func NewOKHTTPError(internalError error) HTTPError {
 	return e
 }
 
-func NewClientObjectFieldNotExistsHTTPError(field string, internalError error) HTTPError {
-	e := ClientObjectFieldNotExistsHTTPError{}
+func NewFieldNotExistsHTTPError(field string, internalError error) HTTPError {
+	e := FieldNotExistsHTTPError{}
 
 	message := fmt.Sprintf("Field '%v' does not exists", field)
 
@@ -208,8 +208,8 @@ func NewClientObjectFieldNotExistsHTTPError(field string, internalError error) H
 	return e
 }
 
-func NewClientObjectFieldNotFilterableHTTPError(field string, internalError error) HTTPError {
-	e := ClientObjectFieldNotFilterableHTTPError{}
+func NewFieldNotFilterableHTTPError(field string, internalError error) HTTPError {
+	e := FieldNotFilterableHTTPError{}
 
 	message := fmt.Sprintf("Field '%v' is not filterable", field)
 
@@ -219,8 +219,8 @@ func NewClientObjectFieldNotFilterableHTTPError(field string, internalError erro
 	return e
 }
 
-func NewClientObjectFieldNotSortableHTTPError(field string, internalError error) HTTPError {
-	e := ClientObjectFieldNotSortableHTTPError{}
+func NewFieldNotSortableHTTPError(field string, internalError error) HTTPError {
+	e := FieldNotSortableHTTPError{}
 
 	message := fmt.Sprintf("Field '%v' is not sortable", field)
 
@@ -230,8 +230,8 @@ func NewClientObjectFieldNotSortableHTTPError(field string, internalError error)
 	return e
 }
 
-func NewClientObjectFieldNotProjectableHTTPError(field string, internalError error) HTTPError {
-	e := ClientObjectFieldNotProjectableHTTPError{}
+func NewFieldNotProjectableHTTPError(field string, internalError error) HTTPError {
+	e := FieldNotProjectableHTTPError{}
 
 	message := fmt.Sprintf("Field '%v' is not projectable", field)
 
@@ -241,8 +241,8 @@ func NewClientObjectFieldNotProjectableHTTPError(field string, internalError err
 	return e
 }
 
-func NewClientObjectFieldRequiredHTTPError(field string, internalError error) HTTPError {
-	e := ClientObjectFieldRequiredHTTPError{}
+func NewFieldRequiredHTTPError(field string, internalError error) HTTPError {
+	e := FieldRequiredHTTPError{}
 
 	message := fmt.Sprintf("Field '%v' is required", field)
 
@@ -252,8 +252,8 @@ func NewClientObjectFieldRequiredHTTPError(field string, internalError error) HT
 	return e
 }
 
-func NewClientObjectFieldNotInsertableHTTPError(field string, internalError error) HTTPError {
-	e := ClientObjectFieldNotInsertableHTTPError{}
+func NewFieldNotInsertableHTTPError(field string, internalError error) HTTPError {
+	e := FieldNotInsertableHTTPError{}
 
 	message := fmt.Sprintf("Field '%v' is not insertable", field)
 
@@ -263,8 +263,8 @@ func NewClientObjectFieldNotInsertableHTTPError(field string, internalError erro
 	return e
 }
 
-func NewClientObjectFieldNotUpdatableHTTPError(field string, internalError error) HTTPError {
-	e := ClientObjectFieldNotUpdatableHTTPError{}
+func NewFieldNotUpdatableHTTPError(field string, internalError error) HTTPError {
+	e := FieldNotUpdatableHTTPError{}
 
 	message := fmt.Sprintf("Field '%v' is not updatable", field)
 

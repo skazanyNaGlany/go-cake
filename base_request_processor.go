@@ -383,7 +383,7 @@ func (brp *BaseRequestProcessor) preRequestFilterableChecks() HTTPError {
 		brp.resource.DbModelJSONFields)
 
 	if len(nonExistingFields) > 0 {
-		return NewClientObjectFieldNotExistsHTTPError(nonExistingFields[0], nil)
+		return NewFieldNotExistsHTTPError(nonExistingFields[0], nil)
 	}
 
 	filterableFields := brp.resource.JSONSchemaConfig.FilterableFields
@@ -394,7 +394,7 @@ func (brp *BaseRequestProcessor) preRequestFilterableChecks() HTTPError {
 
 	for _, iJsonField := range whereFields {
 		if !funk.ContainsString(filterableFields, iJsonField) {
-			return NewClientObjectFieldNotFilterableHTTPError(iJsonField, nil)
+			return NewFieldNotFilterableHTTPError(iJsonField, nil)
 		}
 	}
 
@@ -419,7 +419,7 @@ func (brp *BaseRequestProcessor) preRequestSortableChecks() HTTPError {
 		brp.resource.DbModelJSONFields)
 
 	if len(nonExistingFields) > 0 {
-		return NewClientObjectFieldNotExistsHTTPError(nonExistingFields[0], nil)
+		return NewFieldNotExistsHTTPError(nonExistingFields[0], nil)
 	}
 
 	sortableFields := brp.resource.JSONSchemaConfig.SortableFields
@@ -430,7 +430,7 @@ func (brp *BaseRequestProcessor) preRequestSortableChecks() HTTPError {
 
 	for _, iJsonField := range sortFields {
 		if !funk.ContainsString(sortableFields, iJsonField) {
-			return NewClientObjectFieldNotSortableHTTPError(iJsonField, nil)
+			return NewFieldNotSortableHTTPError(iJsonField, nil)
 		}
 	}
 
@@ -447,7 +447,7 @@ func (brp *BaseRequestProcessor) preRequestProjectableChecks() HTTPError {
 		brp.resource.DbModelJSONFields)
 
 	if len(nonExistingFields) > 0 {
-		return NewClientObjectFieldNotExistsHTTPError(nonExistingFields[0], nil)
+		return NewFieldNotExistsHTTPError(nonExistingFields[0], nil)
 	}
 
 	projectableFields := brp.resource.JSONSchemaConfig.ProjectableFields
@@ -458,7 +458,7 @@ func (brp *BaseRequestProcessor) preRequestProjectableChecks() HTTPError {
 
 	for iJsonField := range brp.request.Projection {
 		if !funk.ContainsString(projectableFields, iJsonField) {
-			return NewClientObjectFieldNotProjectableHTTPError(iJsonField, nil)
+			return NewFieldNotProjectableHTTPError(iJsonField, nil)
 		}
 	}
 
@@ -468,7 +468,7 @@ func (brp *BaseRequestProcessor) preRequestProjectableChecks() HTTPError {
 func (brp *BaseRequestProcessor) preRequestRequireOnInsertChecks(jsonObjectMap map[string]any, requiredFields []string) HTTPError {
 	for _, irequiredField := range requiredFields {
 		if _, ok := jsonObjectMap[irequiredField]; !ok {
-			return NewClientObjectFieldRequiredHTTPError(irequiredField, nil)
+			return NewFieldRequiredHTTPError(irequiredField, nil)
 		}
 	}
 
@@ -480,7 +480,7 @@ func (brp *BaseRequestProcessor) preRequestRequireOnUpdateChecks(
 	requiredFields []string) HTTPError {
 	for _, irequiredField := range requiredFields {
 		if _, ok := jsonObjectMap[irequiredField]; !ok {
-			return NewClientObjectFieldRequiredHTTPError(irequiredField, nil)
+			return NewFieldRequiredHTTPError(irequiredField, nil)
 		}
 	}
 
@@ -518,7 +518,7 @@ func (brp *BaseRequestProcessor) preRequestInsertableChecks(jsonObjectMap map[st
 		}
 
 		if !funk.ContainsString(insertableFields, iJsonField) {
-			return NewClientObjectFieldNotInsertableHTTPError(iJsonField, nil)
+			return NewFieldNotInsertableHTTPError(iJsonField, nil)
 		}
 	}
 
@@ -545,7 +545,7 @@ func (brp *BaseRequestProcessor) preRequestUpdatableChecks(
 		}
 
 		if !funk.ContainsString(updatableFields, iJsonField) {
-			return NewClientObjectFieldNotUpdatableHTTPError(iJsonField, nil)
+			return NewFieldNotUpdatableHTTPError(iJsonField, nil)
 		}
 	}
 
