@@ -46,6 +46,10 @@ func NewMongoDriver(connectionString string, databaseName string, ctx context.Co
 	return &driver, nil
 }
 
+func (d *MongoDriver) GetUnderlyingDriver() any {
+	return d.client
+}
+
 func (d *MongoDriver) Close() error {
 	if d.client == nil {
 		return nil

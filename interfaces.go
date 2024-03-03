@@ -3,6 +3,8 @@ package go_cake
 import "context"
 
 type DatabaseDriver interface {
+	GetUnderlyingDriver() any
+
 	TestModel(
 		idField string,
 		etagField string,

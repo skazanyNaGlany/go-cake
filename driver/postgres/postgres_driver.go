@@ -35,6 +35,10 @@ func NewPostgresDriver(connectionString string, ctx context.Context) (*PostgresD
 	return &driver, nil
 }
 
+func (pd *PostgresDriver) GetUnderlyingDriver() any {
+	return pd.db
+}
+
 func (pd *PostgresDriver) Close() error {
 	if pd.db == nil {
 		return nil
