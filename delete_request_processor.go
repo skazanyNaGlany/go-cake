@@ -31,7 +31,7 @@ func (drp *DeleteRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoC
 		return nil, NewModifiersNotAllowedHTTPError(nil)
 	}
 
-	drp.optimizeFields(drp.request.DecodedJsonSlice)
+	drp.optimizeFields()
 	drp.preRequestJSONActions(drp.request.DecodedJsonSlice)
 
 	converted, err := drp.decodedJsonSliceToDBModels()
@@ -92,7 +92,7 @@ func (drp *DeleteRequestProcessor) checkRanges() HTTPError {
 	return nil
 }
 
-func (drp *DeleteRequestProcessor) optimizeFields(decodedJsonSlice []map[string]any) {
+func (drp *DeleteRequestProcessor) optimizeFields() {
 	optimizeOnDeleteFields := drp.resource.JSONSchemaConfig.OptimizeOnDeleteFields
 	optimizeOnDeleteAnyField := funk.ContainsString(optimizeOnDeleteFields, FIELD_ANY)
 

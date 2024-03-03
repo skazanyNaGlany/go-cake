@@ -33,8 +33,8 @@ func (irp *InsertRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoC
 		return nil, NewModifiersNotAllowedHTTPError(nil)
 	}
 
-	irp.optimizeFields(irp.request.DecodedJsonSlice)
-	irp.preRequestJSONActions(irp.request.DecodedJsonSlice)
+	irp.optimizeFields()
+	irp.preRequestJSONActions()
 
 	converted, err := irp.decodedJsonSliceToDBModels()
 
@@ -76,7 +76,7 @@ func (irp *InsertRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoC
 	return converted, nil
 }
 
-func (irp *InsertRequestProcessor) optimizeFields(decodedJsonSlice []map[string]any) {
+func (irp *InsertRequestProcessor) optimizeFields() {
 	optimizeOnInsertFields := irp.resource.JSONSchemaConfig.OptimizeOnInsertFields
 	optimizeOnInsertAnyField := funk.ContainsString(optimizeOnInsertFields, FIELD_ANY)
 
@@ -88,7 +88,7 @@ func (irp *InsertRequestProcessor) optimizeFields(decodedJsonSlice []map[string]
 	}
 }
 
-func (irp *InsertRequestProcessor) preRequestJSONActions(jsonDocuments []map[string]any) {
+func (irp *InsertRequestProcessor) preRequestJSONActions() {
 	var httpErr HTTPError
 
 	requireOnInsertFields := irp.resource.JSONSchemaConfig.RequiredOnInsertFields

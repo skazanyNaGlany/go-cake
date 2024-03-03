@@ -33,7 +33,7 @@ func (urp *UpdateRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoC
 		return nil, NewModifiersNotAllowedHTTPError(nil)
 	}
 
-	urp.optimizeFields(urp.request.DecodedJsonSlice)
+	urp.optimizeFields()
 	urp.preRequestJSONActions(urp.request.DecodedJsonSlice)
 
 	converted, err := urp.decodedJsonSliceToDBModels()
@@ -76,7 +76,7 @@ func (urp *UpdateRequestProcessor) ProcessRequest(response *ResponseJSON) ([]GoC
 	return converted, nil
 }
 
-func (urp *UpdateRequestProcessor) optimizeFields(decodedJsonSlice []map[string]any) {
+func (urp *UpdateRequestProcessor) optimizeFields() {
 	optimizeOnUpdateFields := urp.resource.JSONSchemaConfig.OptimizeOnUpdateFields
 	optimizeOnUpdateAnyField := funk.ContainsString(optimizeOnUpdateFields, FIELD_ANY)
 
