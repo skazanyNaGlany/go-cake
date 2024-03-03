@@ -45,23 +45,3 @@ type DatabaseDriver interface {
 	GetWhereFields(model GoCakeModel, where string) ([]string, HTTPError)
 	GetSortFields(model GoCakeModel, sort string) ([]string, HTTPError)
 }
-
-type GoCakeModel interface {
-	CreateInstance() GoCakeModel
-	ToMap() (map[string]any, error)
-	CreateETag() any
-	SetID(id string) error
-	GetID() any
-	SetETag(etag string) error
-	GetETag() any
-	SetHTTPError(httpError HTTPError)
-	GetHTTPError() HTTPError
-}
-
-type JSONValidator interface {
-	Validate(item map[string]any) error
-}
-
-type RequestProcessor interface {
-	ProcessRequest(response *ResponseJSON) ([]GoCakeModel, HTTPError)
-}

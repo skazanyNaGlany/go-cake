@@ -5,10 +5,10 @@ import "net/http"
 type MiddlewareQueue struct {
 	ResponseWriter http.ResponseWriter
 	Request        *http.Request
-	Queue          []MiddlewareFunc
+	Queue          []MiddlewareCallback
 }
 
-func (mq *MiddlewareQueue) popMiddlewareFunc(slice []MiddlewareFunc, index int) ([]MiddlewareFunc, MiddlewareFunc) {
+func (mq *MiddlewareQueue) popMiddlewareFunc(slice []MiddlewareCallback, index int) ([]MiddlewareCallback, MiddlewareCallback) {
 	item := slice[index]
 	slice = append(slice[:index], slice[index+1:]...)
 
@@ -16,7 +16,7 @@ func (mq *MiddlewareQueue) popMiddlewareFunc(slice []MiddlewareFunc, index int) 
 }
 
 func (mq *MiddlewareQueue) executeQueuedHandler(w http.ResponseWriter, r *http.Request) {
-	var middlewareFunc MiddlewareFunc
+	var middlewareFunc MiddlewareCallback
 
 	mq.Queue, middlewareFunc = mq.popMiddlewareFunc(mq.Queue, 0)
 

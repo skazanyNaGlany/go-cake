@@ -49,7 +49,7 @@ func NewResource(
 	dbModelETagField string,
 	jsonETagField string,
 	supportedVersion []string,
-	authCallback AuthAppFunc) (*Resource, error) {
+	authCallback AuthCallback) (*Resource, error) {
 	var resource Resource
 	var err error
 

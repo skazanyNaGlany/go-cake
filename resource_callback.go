@@ -1,15 +1,15 @@
 package go_cake
 
 type ResourceCallback struct {
-	AuthCallback        AuthAppFunc
-	PreRequestCallback  PrePostRequestAppFunc
-	PostRequestCallback PrePostRequestAppFunc
-	FetchedDocuments    DocumentsAppFunc
-	UpdatingDocuments   DocumentsAppFunc
-	UpdatedDocuments    DocumentsAppFunc
-	InsertingDocuments  DocumentsAppFunc
-	InsertedDocuments   DocumentsAppFunc
-	DeletingDocuments   DocumentsAppFunc
-	DeletedDocuments    DocumentsAppFunc
-	CreateContext       CreateContextAppFunc
+	AuthCallback        AuthCallback
+	PreRequestCallback  PrePostRequestCallback
+	PostRequestCallback PrePostRequestCallback
+	FetchedDocuments    DocumentsCallback
+	UpdatingDocuments   DocumentsCallback
+	UpdatedDocuments    DocumentsCallback
+	InsertingDocuments  DocumentsCallback
+	InsertedDocuments   DocumentsCallback
+	DeletingDocuments   DocumentsCallback
+	DeletedDocuments    DocumentsCallback
+	CreateContext       CreateContextCallback
 }

@@ -8,7 +8,7 @@ import (
 type Handler struct {
 	NotFoundHandler http.Handler
 	resources       map[string]*Resource
-	middlewares     []MiddlewareFunc
+	middlewares     []MiddlewareCallback
 }
 
 func NewHandler() *Handler {
@@ -18,7 +18,7 @@ func NewHandler() *Handler {
 	return &handler
 }
 
-func (rh *Handler) Use(mwf ...MiddlewareFunc) {
+func (rh *Handler) Use(mwf ...MiddlewareCallback) {
 	rh.middlewares = append(rh.middlewares, mwf...)
 }
 
