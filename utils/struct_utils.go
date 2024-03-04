@@ -11,7 +11,6 @@ import (
 )
 
 type StructUtils struct{}
-type TagMap map[string]map[string]string
 
 var StructUtilsInstance StructUtils
 
